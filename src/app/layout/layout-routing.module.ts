@@ -11,6 +11,18 @@ const routes: Routes = [
         path: '',
         redirectTo: 'home',
         pathMatch: 'full'
+      },
+      {
+        path: 'home',
+        loadChildren: () => import('../features/home/home.module').then(m => m.HomeModule)
+      },
+      {
+        path: 'conservador',
+        loadChildren: () => import('../features/conservador/conservador.module').then(m => m.ConservadorModule)
+      },
+      {
+        path: 'copropiedad',
+        loadChildren: () => import('../features/copropiedad/copropiedad.module').then(m => m.CopropiedadModule)
       }
     ]
   }

@@ -1,0 +1,27 @@
+<div class="surface-card p-5 shadow-2 border-round w-full mb-4">
+    <div class="text-xl font-bold text-paz-white mb-2 uppercase">CARGA DE CARÁTULA/S</div>
+    <p class="text-500 text-sm mb-4">Seleccione el tipo de carga: Manual (ingreso unitario) o por Lotes (vía archivo Excel con Número y RUT).</p>
+
+    <form [formGroup]="cargaForm" (ngSubmit)="onGenerate()">
+        <div class="flex flex-column md:flex-row gap-4">
+            <div class="field flex-1 mb-0">
+                <label class="block font-medium text-900 text-sm mb-2 font-bold">Tipo de carga</label>
+                <p-dropdown [options]="tiposCarga" formControlName="tipoCarga" optionLabel="label" optionValue="value" styleClass="w-full"></p-dropdown>
+            </div>
+            
+            <div class="field flex-1 mb-0">
+                <label class="block font-medium text-900 text-sm mb-2 font-bold">Número de Carátula</label>
+                <input pInputText type="text" formControlName="numeroCaratula" placeholder="Ej: 123456789" class="w-full" />
+            </div>
+
+            <div class="field flex-1 mb-0">
+                <label class="block font-medium text-900 text-sm mb-2 font-bold">RUT</label>
+                <input pInputText type="text" formControlName="rut" placeholder="Ej: 12.345.678-9" class="w-full" />
+            </div>
+
+            <div class="flex align-items-end mb-0">
+                <button pButton pRipple type="submit" label="Generar / Cargar" icon="pi pi-file-export" class="w-full md:w-auto p-button-primary"></button>
+            </div>
+        </div>
+    </form>
+</div>

@@ -1,1 +1,67 @@
 /* You can add global styles to this file, and also import other style files */
+
+@import "primeicons/primeicons.css";
+
+:root {
+    --paz-primary-blue: #1e3a8a; /* The dark blue used in headers/logos */
+    --paz-primary-blue-hover: #2e4a9a;
+    --paz-accent-red: #fca5a5; /* The red/pink accent line */
+    --paz-gray-100: #f5f5f5;
+
+    /* Override PrimeNG primitive variables if applicable */
+    --p-primary-color: var(--paz-primary-blue);
+    --p-primary-500: var(--paz-primary-blue);
+    --p-primary-600: var(--paz-primary-blue-hover);
+    
+    --p-surface-0: #ffffff;
+}
+
+/* Global Utility Classes */
+.text-paz-blue,
+.text-primary {
+    color: var(--paz-primary-blue) !important;
+}
+
+.text-paz-white {
+    color: #ffffff !important;
+}
+
+.text-white {
+    color: #ffffff !important;
+}
+
+.text-white:hover {
+    color: grey !important;
+}
+
+.text-primary:hover {
+    color: var(--paz-primary-blue-hover) !important;
+}
+
+.bg-paz-blue {
+    background-color: var(--paz-primary-blue) !important;
+}
+
+.bg-paz-red {
+    background-color: var(--paz-accent-red) !important;
+}
+
+/* Override default PrimeNG Button */
+.p-button {
+    background-color: var(--paz-primary-blue) !important;
+    border-color: var(--paz-primary-blue) !important;
+    color: #ffffff !important;
+}
+
+.p-button:hover {
+    background-color: var(--paz-primary-blue-hover) !important;
+    border-color: var(--paz-primary-blue-hover) !important;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
