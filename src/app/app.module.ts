@@ -21,7 +21,10 @@ import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
     provideAnimationsAsync(),
     providePrimeNG({
       theme: {
-        preset: Aura
+        preset: Aura,
+        options: {
+          darkModeSelector: '.dark-theme'
+        }
       }
     })
   ],

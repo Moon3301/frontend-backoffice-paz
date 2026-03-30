@@ -10,6 +10,8 @@ import { LayoutRoutingModule } from './layout-routing.module';
 import { SidebarModule } from 'primeng/sidebar';
 import { ButtonModule } from 'primeng/button';
 import { ToolbarModule } from 'primeng/toolbar';
+import { TooltipModule } from 'primeng/tooltip';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [
@@ -23,7 +25,9 @@ import { ToolbarModule } from 'primeng/toolbar';
     LayoutRoutingModule,
     SidebarModule,
     ButtonModule,
-    ToolbarModule
+    ToolbarModule,
+    TooltipModule,
+    RouterModule
   ]
 })
 export class LayoutModule { }

@@ -13,12 +13,17 @@ import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
+import { DialogModule } from 'primeng/dialog';
+import { TooltipModule } from 'primeng/tooltip';
+import { PrimengModule } from '../../primeng/primeng.module';
+import { ModalCaratulaComponent } from './components/modal-caratula/modal-caratula.component';
 
 @NgModule({
   declarations: [
     CaratulasPageComponent,
     CargaCaratulaComponent,
-    CaratulasGeneradasComponent
+    CaratulasGeneradasComponent,
+    ModalCaratulaComponent
   ],
   imports: [
     CommonModule,
@@ -29,7 +34,10 @@ import { TagModule } from 'primeng/tag';
     DropdownModule,
     InputTextModule,
     ButtonModule,
-    TagModule
+    TagModule,
+    DialogModule,
+    TooltipModule,
+    PrimengModule
   ]
 })
 export class ConservadorModule { }

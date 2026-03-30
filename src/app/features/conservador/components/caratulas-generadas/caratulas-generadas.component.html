@@ -20,39 +20,79 @@
                 </div>
             </div>
 
-            <div class="flex align-items-end mb-0 md:w-3">
-                <button pButton pRipple type="submit" label="Buscar" icon="pi pi-search" class="w-full p-button-outlined text-900 font-bold"></button>
+            <div class="flex align-items-end gap-2 mb-0 md:w-auto">
+                <button pButton pRipple type="submit" label="Buscar" icon="pi pi-search"
+                        class="p-button-outlined text-900 font-bold"
+                        [loading]="isLoading">
+                </button>
+                <button pButton pRipple type="button" icon="pi pi-times"
+                        class="p-button-text p-button-secondary"
+                        pTooltip="Limpiar filtros"
+                        tooltipPosition="top"
+                        *ngIf="hasSearched"
+                        (click)="clearSearch()">
+                </button>
             </div>
         </div>
     </form>
 
-    <p-table [value]="caratulas" [paginator]="true" [rows]="10" styleClass="p-datatable-sm mt-4 p-datatable-gridlines border-none" responsiveLayout="scroll">
-        <ng-template pTemplate="header">
-            <tr>
-                <th class="text-500 text-xs uppercase font-bold border-bottom-1 border-300">ID CARÁTULA</th>
-                <th class="text-500 text-xs uppercase font-bold border-bottom-1 border-300">RUT ASOCIADO</th>
-                <th class="text-500 text-xs uppercase font-bold border-bottom-1 border-300">ESTATUS</th>
-                <th class="text-500 text-xs uppercase font-bold border-bottom-1 border-300">USUARIO</th>
-                <th class="text-500 text-xs uppercase font-bold border-bottom-1 border-300">FECHA</th>
-                <th class="text-500 text-xs uppercase font-bold border-bottom-1 border-300 text-center">ACCIONES</th>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-caratula>
-            <tr class="border-bottom-1 surface-border hover:bg-gray-500">
-                <td class="font-bold text-900 py-4">{{caratula.id}}</td>
-                <td class="text-600 py-4">{{caratula.rut}}</td>
-                <td class="py-4">
-                    <p-tag [value]="caratula.estatus" [severity]="getSeverity(caratula.estatus)" [rounded]="true" styleClass="px-3" [style]="caratula.estatus === 'Procesando' ? {'background-color': '#fef08a', 'color': '#854d0e'} : (caratula.estatus === 'Error' ? {'background-color': '#fecaca', 'color': '#991b1b'} : {'background-color': '#bbf7d0', 'color': '#166534'})"></p-tag>
-                </td>
-                <td class="text-600 py-4">{{caratula.usuario}}</td>
-                <td class="text-600 py-4">{{caratula.fecha}}</td>
-                <td class="text-center py-4">
-                    <button pButton pRipple icon="pi pi-download" class="p-button-rounded p-button-text font-bold text-xl" 
-                        [disabled]="caratula.estatus !== 'Generado'" 
-                        [ngClass]="{'text-paz-blue': caratula.estatus === 'Generado', 'text-300': caratula.estatus !== 'Generado'}">
-                    </button>
-                </td>
-            </tr>
-        </ng-template>
-    </p-table>
+    <!-- Loading skeleton -->
+    <div *ngIf="isLoading" class="flex align-items-center justify-content-center py-6">
+        <i class="pi pi-spin pi-spinner text-4xl" style="color: var(--paz-primary-blue);"></i>
+        <span class="ml-3 text-600">Cargando carátulas...</span>
+    </div>
+
+    <!-- Table -->
+    <ng-container *ngIf="!isLoading">
+        <!-- Empty state -->
+        <div *ngIf="caratulas.length === 0" class="flex flex-column align-items-center justify-content-center py-7 gap-3">
+            <i class="pi pi-inbox text-5xl text-300"></i>
+            <div class="text-600 font-medium text-lg">Sin resultados</div>
+            <p class="text-400 text-sm m-0 text-center" *ngIf="hasSearched">
+                No se encontraron carátulas para los filtros aplicados.
+                <a class="cursor-pointer font-bold" style="color: var(--paz-primary-blue);" (click)="clearSearch()">Limpiar búsqueda</a>
+            </p>
+            <p class="text-400 text-sm m-0" *ngIf="!hasSearched">
+                No hay carátulas registradas aún.
+            </p>
+        </div>
+
+        <!-- Results table -->
+        <p-table *ngIf="caratulas.length > 0"
+                 [value]="caratulas"
+                 [paginator]="true"
+                 [rows]="10"
+                 [rowsPerPageOptions]="[10, 25, 50]"
+                 styleClass="p-datatable-sm mt-4 p-datatable-gridlines border-none"
+                 responsiveLayout="scroll">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th class="text-500 text-xs uppercase font-bold border-bottom-1 border-300">ID CARÁTULA</th>
+                    <th class="text-500 text-xs uppercase font-bold border-bottom-1 border-300">NÚMERO CARÁTULA</th>
+                    <th class="text-500 text-xs uppercase font-bold border-bottom-1 border-300">RUT ASOCIADO</th>
+                    <th class="text-500 text-xs uppercase font-bold border-bottom-1 border-300">ESTATUS</th>
+                    <th class="text-500 text-xs uppercase font-bold border-bottom-1 border-300">FECHA</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-caratula>
+                <tr class="border-bottom-1 surface-border hover:surface-hover cursor-pointer transition-colors transition-duration-150"
+                    (click)="openModal(caratula)">
+                    <td class="font-bold text-900 py-4">{{caratula.id}}</td>
+                    <td class="font-bold text-900 py-4">{{caratula.numero_caratula}}</td>
+                    <td class="text-600 py-4">{{caratula.rut}}</td>
+                    <td class="py-4">
+                        <p-tag [value]="caratula.estado_actual" [severity]="getSeverity(caratula.estado_actual)" [rounded]="true" styleClass="px-3" [style]="caratula.estado_actual === 'Procesando' ? {'background-color': '#fef08a', 'color': '#854d0e'} : (caratula.estado_actual === 'Error' ? {'background-color': '#fecaca', 'color': '#991b1b'} : {'background-color': '#bbf7d0', 'color': '#166534'})"></p-tag>
+                    </td>
+                    <td class="text-600 py-4">{{caratula.fecha_estado}}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </ng-container>
 </div>
+
+<!-- Modal Detalle Carátula -->
+<app-modal-caratula
+  [(visible)]="modalVisible"
+  [caratula]="selectedCaratula">
+</app-modal-caratula>
+

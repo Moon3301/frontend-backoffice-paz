@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
+import { CaratulasGeneradasComponent } from '../../components/caratulas-generadas/caratulas-generadas.component';
 
 @Component({
   selector: 'app-caratulas-page',
@@ -8,4 +9,11 @@ import { Component } from '@angular/core';
 })
 export class CaratulasPageComponent {
 
+  @ViewChild(CaratulasGeneradasComponent)
+  listaComponent!: CaratulasGeneradasComponent;
+
+  onCargaExitosa() {
+    // Refresh the list keeping any active filter
+    this.listaComponent?.fetchCaratulas(this.listaComponent.currentFilter);
+  }
 }

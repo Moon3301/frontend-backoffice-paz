@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { ConservadorService, CaratulasFilter } from '../../services/conservador.service';
+import { CaratulasResponseDto } from '../../dto/caratulas-response.dto';
 
 @Component({
   selector: 'app-caratulas-generadas',
@@ -7,39 +9,70 @@ import { FormBuilder, FormGroup } from '@angular/forms';
   templateUrl: './caratulas-generadas.component.html',
   styleUrl: './caratulas-generadas.component.css'
 })
-export class CaratulasGeneradasComponent {
+export class CaratulasGeneradasComponent implements OnInit {
 
   searchForm: FormGroup;
-  
-  caratulas = [
-    { id: '123456789', rut: '12.345.678-9', estatus: 'Generado', usuario: 'Juan Pérez', fecha: '12-05-2025' },
-    { id: '987654321', rut: '98.765.432-1', estatus: 'Generado', usuario: 'María González', fecha: '12-05-2025' },
-    { id: '456789123', rut: '11.222.333-K', estatus: 'Procesando', usuario: 'Carlos Rodriguez', fecha: '11-05-2025' },
-    { id: '789123456', rut: '15.555.444-2', estatus: 'Error', usuario: 'Ana Lopez', fecha: '10-05-2025' }
-  ];
+  caratulas: CaratulasResponseDto[] = [];
 
-  constructor(private fb: FormBuilder) {
+  selectedCaratula: CaratulasResponseDto | null = null;
+  modalVisible: boolean = false;
+
+  isLoading: boolean = false;
+  hasSearched: boolean = false;
+
+  // Stores the active filter so future pagination can reuse it
+  currentFilter: CaratulasFilter = {};
+
+  constructor(private fb: FormBuilder, private conservadorService: ConservadorService) {
     this.searchForm = this.fb.group({
       numeroCaratula: [''],
       rut: ['']
     });
   }
 
+  ngOnInit(): void {
+    this.fetchCaratulas({});
+  }
+
+  async fetchCaratulas(filter: CaratulasFilter) {
+    this.isLoading = true;
+    this.currentFilter = filter;
+    try {
+      this.caratulas = await this.conservadorService.getCaratulasGeneradas(filter);
+    } catch (err) {
+      console.error('Error fetching carátulas:', err);
+      this.caratulas = [];
+    } finally {
+      this.isLoading = false;
+    }
+  }
+
   onSearch() {
-    console.log('Searching with: ', this.searchForm.value);
+    const { numeroCaratula, rut } = this.searchForm.value;
+    const filter: CaratulasFilter = {};
+    if (rut?.trim()) filter.rut = rut.trim();
+    if (numeroCaratula?.trim()) filter.codigo = numeroCaratula.trim();
+    this.hasSearched = !!(filter.rut || filter.codigo);
+    this.fetchCaratulas(filter);
+  }
+
+  clearSearch() {
+    this.searchForm.reset({ numeroCaratula: '', rut: '' });
+    this.hasSearched = false;
+    this.fetchCaratulas({});
+  }
+
+  openModal(caratula: CaratulasResponseDto) {
+    this.selectedCaratula = caratula;
+    this.modalVisible = true;
   }
 
   getSeverity(status: string) {
     switch (status) {
-      case 'Generado':
-        return 'success';
-      case 'Procesando':
-        return 'warning';
-      case 'Error':
-        return 'danger';
-      default:
-        return 'info';
+      case 'Generado':   return 'success';
+      case 'Procesando': return 'warning';
+      case 'Error':      return 'danger';
+      default:           return 'info';
     }
   }
 }
-

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { LayoutService } from '../../services/layout.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'layout-header',
@@ -9,10 +10,19 @@ import { LayoutService } from '../../services/layout.service';
 })
 export class HeaderComponent {
 
-  constructor(private layoutService: LayoutService) {}
+  isDark$: Observable<boolean>;
+
+  constructor(private layoutService: LayoutService) {
+    this.isDark$ = this.layoutService.isDark$;
+  }
 
   toggleMenu() {
     this.layoutService.toggleSidebar();
   }
+
+  toggleDarkMode() {
+    this.layoutService.toggleDarkMode();
+  }
 }
+
 

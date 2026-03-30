@@ -17,7 +17,12 @@
             class="p-button-text p-button-rounded text-white"></button>
         <button pButton pRipple type="button" icon="pi pi-user"
             class="p-button-text p-button-rounded text-white"></button>
-        <button pButton pRipple type="button" icon="pi pi-moon"
-            class="p-button-text p-button-rounded text-white"></button>
+        <button pButton pRipple type="button"
+            [icon]="(isDark$ | async) ? 'pi pi-sun' : 'pi pi-moon'"
+            [pTooltip]="(isDark$ | async) ? 'Modo claro' : 'Modo oscuro'"
+            tooltipPosition="bottom"
+            class="p-button-text p-button-rounded text-white"
+            (click)="toggleDarkMode()">
+        </button>
     </div>
-</div>
+</div>

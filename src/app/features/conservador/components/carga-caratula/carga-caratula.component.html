@@ -1,27 +1,95 @@
 <div class="surface-card p-5 shadow-2 border-round w-full mb-4">
-    <div class="text-xl font-bold text-paz-white mb-2 uppercase">CARGA DE CARÁTULA/S</div>
-    <p class="text-500 text-sm mb-4">Seleccione el tipo de carga: Manual (ingreso unitario) o por Lotes (vía archivo Excel con Número y RUT).</p>
+    <div class="text-xl font-bold text-paz-white mb-1 uppercase">CARGA DE CARÁTULA/S</div>
+    <p class="text-500 text-sm mb-4">Ingresa el número de carátula y RUT para consultar y registrar el estado desde el Conservador.</p>
+
+    <!-- Success feedback -->
+    <div *ngIf="resultadoCarga"
+         class="flex align-items-start gap-3 border-round p-4 mb-4"
+         style="background: #f0fdf4; border: 1px solid #bbf7d0;">
+        <i class="pi pi-check-circle text-2xl mt-1" style="color: #16a34a;"></i>
+        <div class="flex-1">
+            <div class="font-bold mb-1" style="color: #15803d;">Carátula procesada correctamente</div>
+            <div class="text-sm text-600">
+                <span class="font-bold">N° {{ resultadoCarga.numero_caratula }}</span> —
+                Estado: <span class="font-bold">{{ resultadoCarga.estado_actual }}</span>
+                <span *ngIf="resultadoCarga.rut"> · RUT: {{ resultadoCarga.rut }}</span>
+            </div>
+        </div>
+        <button pButton pRipple type="button" icon="pi pi-times"
+                class="p-button-text p-button-sm flex-shrink-0"
+                style="color: #16a34a;"
+                (click)="dismissResult()">
+        </button>
+    </div>
+
+    <!-- Error feedback -->
+    <div *ngIf="errorCarga"
+         class="flex align-items-start gap-3 border-round p-4 mb-4"
+         style="background: #fff1f2; border: 1px solid #fecdd3;">
+        <i class="pi pi-times-circle text-2xl mt-1" style="color: var(--paz-accent-red);"></i>
+        <div class="flex-1">
+            <div class="font-bold mb-1" style="color: #be123c;">Error al procesar la carátula</div>
+            <div class="text-sm text-600">{{ errorCarga }}</div>
+        </div>
+        <button pButton pRipple type="button" icon="pi pi-times"
+                class="p-button-text p-button-sm flex-shrink-0"
+                style="color: var(--paz-accent-red);"
+                (click)="dismissResult()">
+        </button>
+    </div>
 
     <form [formGroup]="cargaForm" (ngSubmit)="onGenerate()">
         <div class="flex flex-column md:flex-row gap-4">
+
+            <!-- Número de Carátula -->
             <div class="field flex-1 mb-0">
-                <label class="block font-medium text-900 text-sm mb-2 font-bold">Tipo de carga</label>
-                <p-dropdown [options]="tiposCarga" formControlName="tipoCarga" optionLabel="label" optionValue="value" styleClass="w-full"></p-dropdown>
-            </div>
-            
-            <div class="field flex-1 mb-0">
-                <label class="block font-medium text-900 text-sm mb-2 font-bold">Número de Carátula</label>
-                <input pInputText type="text" formControlName="numeroCaratula" placeholder="Ej: 123456789" class="w-full" />
+                <label class="block font-medium text-900 text-sm mb-2 font-bold">
+                    Número de Carátula <span style="color: var(--paz-accent-red);">*</span>
+                </label>
+                <input pInputText type="text" formControlName="numeroCaratula"
+                       placeholder="Ej: 24977497"
+                       class="w-full"
+                       [ngClass]="{'ng-invalid ng-dirty': f['numeroCaratula'].invalid && f['numeroCaratula'].touched}" />
+                <div *ngIf="f['numeroCaratula'].invalid && f['numeroCaratula'].touched" class="mt-1">
+                    <small class="text-red-500 text-xs" *ngIf="f['numeroCaratula'].errors?.['required']">
+                        <i class="pi pi-exclamation-circle mr-1"></i>El número de carátula es obligatorio.
+                    </small>
+                    <small class="text-red-500 text-xs" *ngIf="f['numeroCaratula'].errors?.['soloNumeros']">
+                        <i class="pi pi-exclamation-circle mr-1"></i>Debe ingresar solo números.
+                    </small>
+                </div>
             </div>
 
+            <!-- RUT -->
             <div class="field flex-1 mb-0">
-                <label class="block font-medium text-900 text-sm mb-2 font-bold">RUT</label>
-                <input pInputText type="text" formControlName="rut" placeholder="Ej: 12.345.678-9" class="w-full" />
+                <label class="block font-medium text-900 text-sm mb-2 font-bold">
+                    RUT <span style="color: var(--paz-accent-red);">*</span>
+                </label>
+                <input pInputText type="text" formControlName="rut"
+                       placeholder="Ej: 76701870-3"
+                       class="w-full"
+                       [ngClass]="{'ng-invalid ng-dirty': f['rut'].invalid && f['rut'].touched}" />
+                <div *ngIf="f['rut'].invalid && f['rut'].touched" class="mt-1">
+                    <small class="text-red-500 text-xs" *ngIf="f['rut'].errors?.['required']">
+                        <i class="pi pi-exclamation-circle mr-1"></i>El RUT es obligatorio.
+                    </small>
+                    <small class="text-red-500 text-xs" *ngIf="f['rut'].errors?.['minlength']">
+                        <i class="pi pi-exclamation-circle mr-1"></i>El RUT debe tener al menos 9 caracteres.
+                    </small>
+                </div>
             </div>
 
-            <div class="flex align-items-end mb-0">
-                <button pButton pRipple type="submit" label="Generar / Cargar" icon="pi pi-file-export" class="w-full md:w-auto p-button-primary"></button>
+            <!-- Submit -->
+            <div class="flex align-items-start mb-0 pt-4">
+                <button pButton pRipple type="submit"
+                        label="Generar / Cargar"
+                        icon="pi pi-file-export"
+                        class="w-full md:w-auto p-button-primary"
+                        [loading]="isLoading"
+                        [disabled]="isLoading">
+                </button>
             </div>
         </div>
     </form>
 </div>
+
