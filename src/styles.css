@@ -1,38 +1,42 @@
 /* ────────────────────────────────────────────────────────────────
-   Global Styles – frontend-backoffice-paz
+   Global Styles – frontend-backoffice-paz (High Contrast Theme)
    ──────────────────────────────────────────────────────────────── */
 @import "primeicons/primeicons.css";
 
 /* ── Light Mode Tokens ── */
 :root {
-    --paz-primary-blue: #1e3a8a;
-    --paz-primary-blue-hover: #2e4a9a;
-    --paz-accent-red: #dc2626;
+    --paz-primary: #0f172a;        /* Deep Slate for Primary brand (Buttons/Links) */
+    --paz-primary-hover: #334155;  /* Lighter slate for hover */
+    --paz-primary-text: #ffffff;   /* Text on primary buttons */
+    --paz-accent-red: #ef4444;     /* Crisp Red for accents/errors */
 
     /* Surfaces */
-    --paz-bg-page:        #f5f5f5;
-    --paz-bg-card:        #ffffff;
-    --paz-bg-card-hover:  #f8faff;
-    --paz-border-color:   #e2e8f0;
+    --paz-bg-page:        #f8fafc; /* Very light slate background */
+    --paz-bg-card:        #ffffff; /* Stark white cards */
+    --paz-bg-card-hover:  #f1f5f9; /* Slate 100 for hovered cards/rows */
+    --paz-border-color:   #e2e8f0; /* Default subtle borders */
 
     /* Text */
-    --paz-text-primary:   #1e293b;
-    --paz-text-secondary: #475569;
-    --paz-text-muted:     #94a3b8;
+    --paz-text-primary:   #0f172a; /* Slate 900 for high-contrast reading */
+    --paz-text-secondary: #475569; /* Slate 600 for secondary info */
+    --paz-text-muted:     #94a3b8; /* Slate 400 for placeholders/muted */
 
-    /* Sidebar */
+    /* Sidebar / Header */
     --paz-sidebar-bg:     #ffffff;
-    --paz-sidebar-text:   #374151;
+    --paz-sidebar-text:   #1e293b;
     --paz-sidebar-hover:  #f1f5f9;
-    --paz-sidebar-active: #eff6ff;
+    --paz-sidebar-active: #e2e8f0;
 
-    /* Status badges – light */
-    --paz-badge-success-bg:   #bbf7d0;
-    --paz-badge-success-text: #166534;
-    --paz-badge-warning-bg:   #fef08a;
-    --paz-badge-warning-text: #854d0e;
-    --paz-badge-error-bg:     #fecaca;
-    --paz-badge-error-text:   #991b1b;
+    --paz-header-bg:      #020617; /* Slate 950 - Almost Black Header */
+    --paz-header-text:    #ffffff;
+
+    /* Status badges – light (Crisp and subtle pastel) */
+    --paz-badge-success-bg:   #dcfce7; /* Green 100 */
+    --paz-badge-success-text: #166534; /* Green 800 */
+    --paz-badge-warning-bg:   #fef3c7; /* Amber 100 */
+    --paz-badge-warning-text: #92400e; /* Amber 800 */
+    --paz-badge-error-bg:     #fee2e2; /* Red 100 */
+    --paz-badge-error-text:   #991b1b; /* Red 800 */
 
     /* Feedback banners */
     --paz-success-banner-bg:     #f0fdf4;
@@ -41,78 +45,90 @@
     --paz-error-banner-border:   #fecdd3;
 
     /* PrimeNG overrides */
-    --p-primary-color: var(--paz-primary-blue);
-    --p-primary-500:   var(--paz-primary-blue);
-    --p-primary-600:   var(--paz-primary-blue-hover);
+    --p-primary-color: var(--paz-primary);
+    --p-primary-500:   var(--paz-primary);
+    --p-primary-600:   var(--paz-primary-hover);
     --p-surface-0:     #ffffff;
 }
 
 /* ── Dark Mode Tokens ── */
 html.dark-theme {
-    --paz-primary-blue: #3b82f6;
-    --paz-primary-blue-hover: #60a5fa;
-    --paz-accent-red: #f87171;
+    --paz-primary: #f8fafc;        /* Stark White/Off-white for Primary brand */
+    --paz-primary-hover: #cbd5e1;  /* Slate 300 for hover */
+    --paz-primary-text: #0f172a;   /* Inverted text for primary buttons */
+    --paz-accent-red: #f87171;     /* Desaturated Red for dark backgrounds */
 
     /* Surfaces */
-    --paz-bg-page:        #0f172a;
-    --paz-bg-card:        #1e293b;
-    --paz-bg-card-hover:  #263348;
-    --paz-border-color:   #334155;
+    --paz-bg-page:        #09090b; /* Zinc 950 - True Deep Dark */
+    --paz-bg-card:        #18181b; /* Zinc 900 - Slight elevation */
+    --paz-bg-card-hover:  #27272a; /* Zinc 800 - Interaction state */
+    --paz-border-color:   #27272a; /* Zinc 800 - Borders */
 
     /* Text */
-    --paz-text-primary:   #f1f5f9;
-    --paz-text-secondary: #94a3b8;
-    --paz-text-muted:     #64748b;
+    --paz-text-primary:   #fafafa; /* Zinc 50 - Almost white text */
+    --paz-text-secondary: #a1a1aa; /* Zinc 400 - Readable secondary */
+    --paz-text-muted:     #52525b; /* Zinc 600 - Muted info */
 
-    /* Sidebar */
-    --paz-sidebar-bg:     #1e293b;
-    --paz-sidebar-text:   #cbd5e1;
-    --paz-sidebar-hover:  #263348;
-    --paz-sidebar-active: #1d3461;
+    /* Sidebar / Header */
+    --paz-sidebar-bg:     #09090b; /* Merges into page background */
+    --paz-sidebar-text:   #e4e4e7; /* Zinc 200 */
+    --paz-sidebar-hover:  #18181b;
+    --paz-sidebar-active: #27272a;
 
-    /* Status badges – dark (slightly muted to avoid eye strain) */
-    --paz-badge-success-bg:   #14532d;
+    --paz-header-bg:      #09090b; /* Header same as background with bottom border */
+    --paz-header-text:    #ffffff;
+
+    /* Status badges – dark (Muted high-contrast colors) */
+    --paz-badge-success-bg:   #052e16;
     --paz-badge-success-text: #86efac;
-    --paz-badge-warning-bg:   #713f12;
+    --paz-badge-warning-bg:   #451a03;
     --paz-badge-warning-text: #fde68a;
-    --paz-badge-error-bg:     #7f1d1d;
+    --paz-badge-error-bg:     #450a0a;
     --paz-badge-error-text:   #fca5a5;
 
     /* Feedback banners */
     --paz-success-banner-bg:     #052e16;
-    --paz-success-banner-border: #166534;
-    --paz-error-banner-bg:       #1c0a0a;
+    --paz-success-banner-border: #14532d;
+    --paz-error-banner-bg:       #450a0a;
     --paz-error-banner-border:   #7f1d1d;
 
     /* PrimeNG overrides */
-    --p-primary-color: var(--paz-primary-blue);
-    --p-primary-500:   var(--paz-primary-blue);
-    --p-primary-600:   var(--paz-primary-blue-hover);
-    --p-surface-0:     #1e293b;
+    --p-primary-color: var(--paz-primary);
+    --p-primary-500:   var(--paz-primary);
+    --p-primary-600:   var(--paz-primary-hover);
+    --p-surface-0:     var(--paz-bg-card);
 }
 
 /* ════════════════════════════════════════════════
    Utility Classes (theme-aware)
    ════════════════════════════════════════════════ */
 
-.text-paz-blue,
+.text-paz-primary,
 .text-primary {
-    color: var(--paz-primary-blue) !important;
+    color: var(--paz-primary) !important;
 }
 
 .text-paz-white {
+    /* Changes intelligently based on theme background */
+    color: var(--paz-text-primary) !important;
+}
+
+.text-paz-primary-text {
+    color: var(--paz-primary-text) !important;
+}
+
+/* Force pure white when needed regardless of theme */
+.text-pure-white {
     color: #ffffff !important;
 }
 
-.text-white {
-    color: #ffffff !important;
-}
+.text-pure-white:hover  { color: rgba(255,255,255,.75) !important; }
+.text-primary:hover     { color: var(--paz-primary-hover) !important; }
 
-.text-white:hover  { color: rgba(255,255,255,.75) !important; }
-.text-primary:hover { color: var(--paz-primary-blue-hover) !important; }
-
-.bg-paz-blue { background-color: #1e3a8a !important; } /* header stays dark-navy always */
-.bg-paz-red  { background-color: var(--paz-accent-red) !important; }
+/* The new main primary background */
+.bg-paz-primary { background-color: var(--paz-primary) !important; }
+.bg-paz-header  { background-color: var(--paz-header-bg) !important; color: var(--paz-header-text) !important; }
+.bg-paz-red     { background-color: var(--paz-accent-red) !important; }
 
 /* ════════════════════════════════════════════════
    Page / Card backgrounds  (non-PrimeNG elements)
@@ -132,10 +148,16 @@ body {
     transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
+/* Header bottom border specific for Dark mode to differentiate from background */
+html.dark-theme .paz-header-container {
+    border-bottom: 1px solid var(--paz-border-color);
+}
+
 /* Sidebar */
 .p-sidebar {
     background-color: var(--paz-sidebar-bg) !important;
     color: var(--paz-sidebar-text) !important;
+    border-right: 1px solid var(--paz-border-color) !important;
 }
 
 .p-sidebar .p-sidebar-header,
@@ -143,51 +165,44 @@ body {
     background-color: var(--paz-sidebar-bg) !important;
 }
 
-/* Table */
-html.dark-theme .p-datatable .p-datatable-thead > tr > th {
-    background-color: #263348 !important;
+/* Table - sleek minimal look */
+.p-datatable .p-datatable-thead > tr > th {
+    background-color: transparent !important;
     color: var(--paz-text-secondary) !important;
+    border-color: var(--paz-border-color) !important;
+    font-weight: 700 !important;
+}
+
+.p-datatable .p-datatable-tbody > tr {
+    background-color: transparent !important;
+    color: var(--paz-text-primary) !important;
     border-color: var(--paz-border-color) !important;
 }
 
-html.dark-theme .p-datatable .p-datatable-tbody > tr {
-    background-color: var(--paz-bg-card) !important;
-    color: var(--paz-text-primary) !important;
-}
-
-html.dark-theme .p-datatable .p-datatable-tbody > tr:hover {
+.p-datatable .p-datatable-tbody > tr:hover {
     background-color: var(--paz-bg-card-hover) !important;
 }
 
-/* Dialog */
-html.dark-theme .p-dialog .p-dialog-header,
-html.dark-theme .p-dialog .p-dialog-content,
-html.dark-theme .p-dialog .p-dialog-footer {
-    background-color: var(--paz-bg-card) !important;
-    color: var(--paz-text-primary) !important;
-}
-
-/* Input / Dropdown */
+/* Dropdown styling */
 html.dark-theme .p-inputtext,
 html.dark-theme .p-dropdown {
-    background-color: #0f172a !important;
+    background-color: #18181b !important;
     border-color: var(--paz-border-color) !important;
     color: var(--paz-text-primary) !important;
 }
-
 html.dark-theme .p-dropdown-panel,
 html.dark-theme .p-dropdown-items-wrapper {
-    background-color: #1e293b !important;
+    background-color: #18181b !important;
     color: var(--paz-text-primary) !important;
+    border: 1px solid var(--paz-border-color);
 }
-
 html.dark-theme .p-dropdown-item:hover {
-    background-color: #263348 !important;
+    background-color: #27272a !important;
 }
 
 /* Paginator */
-html.dark-theme .p-paginator {
-    background-color: var(--paz-bg-card) !important;
+.p-paginator {
+    background-color: transparent !important;
     color: var(--paz-text-secondary) !important;
     border-color: var(--paz-border-color) !important;
 }
@@ -197,44 +212,63 @@ html.dark-theme .paz-banner-success {
     background: var(--paz-success-banner-bg) !important;
     border-color: var(--paz-success-banner-border) !important;
 }
-
 html.dark-theme .paz-banner-error {
     background: var(--paz-error-banner-bg) !important;
     border-color: var(--paz-error-banner-border) !important;
 }
 
-/* surface-* PrimeFlex overrides – dark */
+/* surface-* PrimeFlex overrides – adaptive to dark mode */
 html.dark-theme .surface-card   { background-color: var(--paz-bg-card)  !important; }
 html.dark-theme .surface-ground { background-color: var(--paz-bg-page)  !important; }
-html.dark-theme .surface-100    { background-color: #263348 !important; }
+html.dark-theme .surface-100    { background-color: var(--paz-bg-card-hover) !important; }
 html.dark-theme .surface-hover  { background-color: var(--paz-bg-card-hover) !important; }
 
 /* Text overrides for dark */
 html.dark-theme .text-900 { color: var(--paz-text-primary)   !important; }
-html.dark-theme .text-700 { color: var(--paz-text-secondary) !important; }
+html.dark-theme .text-700 { color: var(--paz-text-primary) !important; }
 html.dark-theme .text-600 { color: var(--paz-text-secondary) !important; }
 html.dark-theme .text-500 { color: var(--paz-text-muted)     !important; }
 html.dark-theme .text-400 { color: var(--paz-text-muted)     !important; }
 
 /* Transition for smooth mode switch */
-html.dark-theme *,
-html.dark-theme *::before,
-html.dark-theme *::after {
+*, *::before, *::after {
     transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
 /* ════════════════════════════════════════════════
-   PrimeNG Button Override (stays consistent)
+   PrimeNG Button Override (High contrast)
    ════════════════════════════════════════════════ */
-.p-button {
-    background-color: var(--paz-primary-blue) !important;
-    border-color:     var(--paz-primary-blue) !important;
-    color: #ffffff !important;
+/* ════════════════════════════════════════════════
+   PrimeNG Button Override (High contrast)
+   ════════════════════════════════════════════════ */
+.p-button:not(.p-button-outlined):not(.p-button-text):not(.p-button-link) {
+    background-color: var(--paz-primary) !important;
+    border-color:     var(--paz-primary) !important;
+    color: var(--paz-primary-text) !important;
 }
 
-.p-button:hover {
-    background-color: var(--paz-primary-blue-hover) !important;
-    border-color:     var(--paz-primary-blue-hover) !important;
+.p-button:not(.p-button-outlined):not(.p-button-text):not(.p-button-link):hover {
+    background-color: var(--paz-primary-hover) !important;
+    border-color:     var(--paz-primary-hover) !important;
+}
+
+/* For pure outline buttons we respect their color */
+.p-button.p-button-outlined {
+    background-color: transparent !important;
+    color: var(--paz-primary) !important;
+    border-color: var(--paz-primary) !important;
+}
+.p-button.p-button-outlined:hover {
+    background-color: var(--paz-bg-card-hover) !important;
+}
+
+/* For pure text buttons */
+.p-button.p-button-text {
+    background-color: transparent !important;
+    border-color: transparent !important;
+}
+.p-button.p-button-text:hover {
+    background-color: var(--paz-bg-card-hover) !important;
 }
 
 /* ════════════════════════════════════════════════

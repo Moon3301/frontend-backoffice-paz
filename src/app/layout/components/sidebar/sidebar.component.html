@@ -1,28 +1,36 @@
 <p-sidebar [(visible)]="sidebarVisible" (onHide)="onHide()" [showCloseIcon]="true" position="left" styleClass="w-20rem">
     
     <ng-template pTemplate="header">
-        <div class="flex align-items-center justify-content-start font-bold text-xl text-paz-blue">
-            <span class="bg-gray-800 text-white mr-2 flex align-items-center justify-content-center border-round" style="width: 30px; height: 30px; font-size: 10px; border-bottom: 2px solid var(--paz-accent-red);">PAZ</span>
+        
+        <div class="flex align-items-center justify-content-start font-bold text-xl text-paz-primary ">
+             <div class="flex align-items-center justify-content-center bg-red-700 font-bold mr-2" style="width: 40px; height: 40px;">
+                <img src="/images/logo-paz.png" alt="Logo Paz" class="w-2rem mr-2">
+            </div>
             Menú Principal
         </div>
     </ng-template>
     
-
+    
     <div class="flex flex-column gap-2 mt-3">
-        <a routerLink="/home" routerLinkActive="bg-black-alpha-10 text-paz-blue border-round font-bold" class="p-3 cursor-pointer text-700 hover:bg-white-alpha-10 transition-duration-150 transition-colors border-round no-underline flex align-items-center">
+        <!-- inicio  agregar mensaje de que esta en desarrollo esta parte puede ser un boton flotante o lago asi-->
+        <a routerLink="/home" routerLinkActive="bg-black-alpha-10 text-paz-primary border-round font-bold" class="p-3 cursor-pointer text-700 hover:bg-white-alpha-10 transition-duration-150 transition-colors border-round no-underline flex align-items-center">
             <i class="pi pi-home mr-3 text-lg"></i>
             <span class="font-medium">Inicio</span>
+            <span class="text-xs text-red-500 ml-2">En desarrollo</span>
         </a>
-        <a routerLink="/conservador" routerLinkActive="bg-black-alpha-10 text-paz-blue border-round font-bold" class="p-3 cursor-pointer text-700 hover:bg-white-alpha-10 transition-duration-150 transition-colors border-round no-underline flex align-items-center">
+        <!-- conservador -->
+        <a routerLink="/conservador" routerLinkActive="bg-black-alpha-10 text-paz-primary border-round font-bold" class="p-3 cursor-pointer text-700 hover:bg-white-alpha-10 transition-duration-150 transition-colors border-round no-underline flex align-items-center">
             <i class="pi pi-building mr-3 text-lg"></i>
             <span class="font-medium">Conservador de Bienes</span>
         </a>
-        <a routerLink="/copropiedad" routerLinkActive="bg-black-alpha-10 text-paz-blue border-round font-bold" class="p-3 cursor-pointer text-700 hover:bg-white-alpha-10 transition-duration-150 transition-colors border-round no-underline flex align-items-center">
+        <!-- copropiedad diseno deshabilitar -->
+        <a routerLink="/copropiedad" routerLinkActive="bg-black-alpha-10 text-paz-primary border-round font-bold " class="p-3 cursor-pointer text-700 hover:bg-white-alpha-10 transition-duration-150 transition-colors border-round no-underline flex align-items-center">
             <i class="pi pi-users mr-3 text-lg"></i>
             <span class="font-medium">Copropiedad</span>
+            <span class="text-xs text-red-500 ml-2">En desarrollo</span>
         </a>
         <hr class="w-full border-top-1 border-none surface-border mt-3 mb-3">
-        <a routerLink="/auth/login" class="p-3 cursor-pointer text-red-500 hover:bg-red-50 transition-duration-150 transition-colors border-round no-underline flex align-items-center">
+        <a (click)="logout()" class="p-3 cursor-pointer text-red-500 hover:bg-red-50 transition-duration-150 transition-colors border-round no-underline flex align-items-center">
             <i class="pi pi-sign-out mr-3 text-lg"></i>
             <span class="font-medium">Cerrar Sesión</span>
         </a>

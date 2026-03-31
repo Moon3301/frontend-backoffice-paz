@@ -1,7 +1,13 @@
-<div class="min-h-screen surface-ground flex align-items-center justify-content-center p-4">
+<div class="min-h-screen surface-ground flex align-items-center justify-content-center p-4 relative">
 
-    <div class="surface-card p-5 shadow-2 border-round w-full" style="max-width: 450px;">
-        <div class="text-center mb-5">
+    <!-- Botón de Modo Oscuro / Claro en el Login -->
+    <div class="absolute top-0 right-0 p-4">
+        <app-theme-toggle [customClass]="'text-color'"></app-theme-toggle>
+    </div>
+
+    <div class="surface-card p-5 shadow-2 border-round w-full z-1" style="max-width: 450px;">
+        <div class="text-center mb-5" >
+            <img src="/images/logo-paz.png" alt="Logo" class="mb-3" style="max-width: 100px;">
             <div class="text-900 text-3xl font-bold mb-2">Bienvenido</div>
             <span class="text-600 font-medium">Ingresa tus credenciales para acceder al sistema.</span>
         </div>

@@ -13,8 +13,8 @@
   <ng-template pTemplate="header">
     <div class="flex align-items-center gap-3">
       <div class="flex align-items-center justify-content-center border-round"
-           style="width: 38px; height: 38px; background: var(--paz-primary-blue);">
-        <i class="pi pi-file text-white text-lg"></i>
+           style="width: 38px; height: 38px; background: var(--paz-primary);">
+        <i class="pi pi-file text-paz-primary-text text-lg"></i>
       </div>
       <div>
         <div class="font-bold text-xl text-900">Carátula #{{ caratula.numero_caratula }}</div>
@@ -29,7 +29,7 @@
     <!-- ── Información General ── -->
     <section>
       <div class="flex align-items-center gap-2 mb-3">
-        <i class="pi pi-info-circle" style="color: var(--paz-primary-blue);"></i>
+        <i class="pi pi-info-circle" style="color: var(--paz-primary);"></i>
         <span class="font-bold text-900 text-base uppercase" style="letter-spacing: .05em;">Información General</span>
       </div>
       <div class="grid">
@@ -90,15 +90,15 @@
     <!-- ── Historial de Trazabilidad ── -->
     <section *ngIf="caratula.historiales && caratula.historiales.length > 0">
       <div class="flex align-items-center gap-2 mb-3">
-        <i class="pi pi-history" style="color: var(--paz-primary-blue);"></i>
+        <i class="pi pi-history" style="color: var(--paz-primary);"></i>
         <span class="font-bold text-900 text-base uppercase" style="letter-spacing: .05em;">Historial de Trazabilidad</span>
         <span class="ml-auto text-500 text-sm">{{ caratula.historiales.length }} registro(s)</span>
       </div>
       <div class="flex flex-column gap-2">
         <div *ngFor="let h of caratula.historiales; let i = index"
              class="flex align-items-start gap-3 p-3 border-round border-1 border-200">
-          <div class="flex align-items-center justify-content-center border-circle text-white font-bold text-xs flex-shrink-0"
-               style="width: 28px; height: 28px; background: var(--paz-primary-blue); min-width: 28px;">
+          <div class="flex align-items-center justify-content-center border-circle text-paz-primary-text font-bold text-xs flex-shrink-0"
+               style="width: 28px; height: 28px; background: var(--paz-primary); min-width: 28px;">
             {{ i + 1 }}
           </div>
           <div class="flex-1">
@@ -116,28 +116,41 @@
     <!-- ── Documentos Generados ── -->
     <section *ngIf="caratula.documentos && caratula.documentos.length > 0">
       <div class="flex align-items-center gap-2 mb-3">
-        <i class="pi pi-paperclip" style="color: var(--paz-primary-blue);"></i>
+        <i class="pi pi-paperclip" style="color: var(--paz-primary);"></i>
         <span class="font-bold text-900 text-base uppercase" style="letter-spacing: .05em;">Documentos Generados</span>
         <span class="ml-auto text-500 text-sm">{{ caratula.documentos.length }} documento(s)</span>
       </div>
       <div class="grid">
         <div *ngFor="let doc of caratula.documentos" class="col-12 sm:col-6">
-          <div class="flex align-items-center gap-3 border-1 border-200 border-round p-3 h-full hover:surface-100 transition-colors transition-duration-150">
-            <div class="flex align-items-center justify-content-center border-round flex-shrink-0"
-                 style="width: 38px; height: 38px; background: #eff6ff; min-width: 38px;">
-              <i class="pi pi-file-pdf" style="color: var(--paz-accent-red); font-size: 1.2rem;"></i>
-            </div>
-            <div class="flex-1 min-w-0">
-              <div class="font-bold text-900 text-sm mb-1 white-space-nowrap overflow-hidden text-overflow-ellipsis">
-                {{ doc.tipoDocumento }}
+          <div class="flex flex-column gap-2">
+            <div class="flex align-items-center gap-3 border-1 border-200 border-round p-3 h-full hover:surface-100 transition-colors transition-duration-150">
+              <div class="flex align-items-center justify-content-center border-round flex-shrink-0"
+                   style="width: 38px; height: 38px; background: #eff6ff; min-width: 38px;">
+                <i class="pi pi-file-pdf" style="color: var(--paz-accent-red); font-size: 1.2rem;"></i>
               </div>
-              <div class="text-400 text-xs">{{ doc.createdAt | date:'dd/MM/yyyy HH:mm' }}</div>
+              <div class="flex-1 min-w-0">
+                <div class="font-bold text-900 text-sm mb-1 white-space-nowrap overflow-hidden text-overflow-ellipsis">
+                  {{ doc.tipoDocumento }}
+                </div>
+                <div class="text-400 text-xs">{{ doc.createdAt | date:'dd/MM/yyyy HH:mm' }}</div>
+              </div>
+              <button pButton pRipple type="button"
+                      icon="pi pi-download"
+                      class="p-button-sm p-button-outlined p-button-rounded flex-shrink-0"
+                      style="border-color: var(--paz-primary); color: var(--paz-primary);"
+                      [loading]="isDescargando(doc.id)"
+                      [disabled]="isDescargando(doc.id)"
+                      title="Descargar documento"
+                      (click)="descargarDocumento(doc)">
+              </button>
             </div>
-            <a [href]="doc.enlace" target="_blank" rel="noopener"
-               class="p-button p-button-sm p-button-outlined p-button-rounded flex-shrink-0"
-               style="border-color: var(--paz-primary-blue); color: var(--paz-primary-blue);"
-               pButton pRipple icon="pi pi-download" title="Descargar documento">
-            </a>
+            <!-- Error inline por documento -->
+            <div *ngIf="errorDescargaId === doc.id"
+                 class="flex align-items-center gap-2 px-2 py-1 border-round text-xs"
+                 style="background: #fff1f2; color: #be123c;">
+              <i class="pi pi-exclamation-circle"></i>
+              <span>No se pudo descargar el documento. Intenta nuevamente.</span>
+            </div>
           </div>
         </div>
       </div>

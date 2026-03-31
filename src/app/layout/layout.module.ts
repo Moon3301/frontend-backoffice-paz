@@ -5,6 +5,7 @@ import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { LayoutRoutingModule } from './layout-routing.module';
+import { SharedModule } from '../shared/shared.module';
 
 // PrimeNG Modules
 import { SidebarModule } from 'primeng/sidebar';
@@ -27,7 +28,8 @@ import { RouterModule } from '@angular/router';
     ButtonModule,
     ToolbarModule,
     TooltipModule,
-    RouterModule
+    RouterModule,
+    SharedModule
   ]
 })
 export class LayoutModule { }

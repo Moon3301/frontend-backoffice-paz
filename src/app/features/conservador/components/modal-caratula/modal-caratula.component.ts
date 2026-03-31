@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { CaratulasResponseDto } from '../../dto/caratulas-response.dto';
+import { CaratulasResponseDto, Documento } from '../../dto/caratulas-response.dto';
+import { ConservadorService } from '../../services/conservador.service';
 
 @Component({
   selector: 'app-modal-caratula',
@@ -12,6 +13,12 @@ export class ModalCaratulaComponent {
   @Input() caratula: CaratulasResponseDto | null = null;
   @Input() visible: boolean = false;
   @Output() visibleChange = new EventEmitter<boolean>();
+
+  /** Repositorio local de estados de descarga por doc.id */
+  descargandoIds: Set<number> = new Set();
+  errorDescargaId: number | null = null;
+
+  constructor(private conservadorService: ConservadorService) {}
 
   close() {
     this.visible = false;
@@ -28,6 +35,27 @@ export class ModalCaratulaComponent {
         return { 'background-color': '#fecaca', 'color': '#991b1b' };
       default:
         return { 'background-color': '#e0f2fe', 'color': '#0369a1' };
+    }
+  }
+
+  isDescargando(docId: number): boolean {
+    return this.descargandoIds.has(docId);
+  }
+
+  async descargarDocumento(doc: Documento) {
+    if (this.descargandoIds.has(doc.id)) return;
+
+    this.descargandoIds.add(doc.id);
+    this.errorDescargaId = null;
+
+    const nombreArchivo = `${doc.tipoDocumento.replace(/\s+/g, '_')}_${doc.id}.pdf`;
+
+    try {
+      await this.conservadorService.descargarDocumento(doc.id, nombreArchivo);
+    } catch (err: any) {
+      this.errorDescargaId = doc.id;
+    } finally {
+      this.descargandoIds.delete(doc.id);
     }
   }
 }

@@ -10,18 +10,11 @@ import { Observable } from 'rxjs';
 })
 export class HeaderComponent {
 
-  isDark$: Observable<boolean>;
-
   constructor(private layoutService: LayoutService) {
-    this.isDark$ = this.layoutService.isDark$;
   }
 
   toggleMenu() {
     this.layoutService.toggleSidebar();
-  }
-
-  toggleDarkMode() {
-    this.layoutService.toggleDarkMode();
   }
 }
 

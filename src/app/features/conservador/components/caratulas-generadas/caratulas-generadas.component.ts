@@ -20,7 +20,12 @@ export class CaratulasGeneradasComponent implements OnInit {
   isLoading: boolean = false;
   hasSearched: boolean = false;
 
-  // Stores the active filter so future pagination can reuse it
+  // Pagination state
+  totalRecords: number = 0;
+  rows: number = 10;
+  first: number = 0;
+
+  // Stores the active filter so lazy load can reuse it across page changes
   currentFilter: CaratulasFilter = {};
 
   constructor(private fb: FormBuilder, private conservadorService: ConservadorService) {
@@ -31,20 +36,32 @@ export class CaratulasGeneradasComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.fetchCaratulas({});
+    // Trigger initial load via the table's onLazyLoad event (first emission)
+    this.fetchCaratulas({ page: 1, limit: this.rows });
   }
 
   async fetchCaratulas(filter: CaratulasFilter) {
     this.isLoading = true;
     this.currentFilter = filter;
     try {
-      this.caratulas = await this.conservadorService.getCaratulasGeneradas(filter);
+      const response = await this.conservadorService.getCaratulasGeneradas(filter);
+      this.caratulas = response.data;
+      this.totalRecords = response.meta.totalRecords;
     } catch (err) {
       console.error('Error fetching carátulas:', err);
       this.caratulas = [];
+      this.totalRecords = 0;
     } finally {
       this.isLoading = false;
     }
+  }
+
+  /** Called by p-table [lazy] on every page change */
+  cargarCaratulasLazy(event: any) {
+    const page = Math.floor(event.first / event.rows) + 1;
+    const limit = event.rows;
+    this.rows = limit;
+    this.fetchCaratulas({ ...this.currentFilter, page, limit });
   }
 
   onSearch() {
@@ -53,13 +70,16 @@ export class CaratulasGeneradasComponent implements OnInit {
     if (rut?.trim()) filter.rut = rut.trim();
     if (numeroCaratula?.trim()) filter.codigo = numeroCaratula.trim();
     this.hasSearched = !!(filter.rut || filter.codigo);
-    this.fetchCaratulas(filter);
+    // Reset to first page on new search
+    this.first = 0;
+    this.fetchCaratulas({ ...filter, page: 1, limit: this.rows });
   }
 
   clearSearch() {
     this.searchForm.reset({ numeroCaratula: '', rut: '' });
     this.hasSearched = false;
-    this.fetchCaratulas({});
+    this.first = 0;
+    this.fetchCaratulas({ page: 1, limit: this.rows });
   }
 
   openModal(caratula: CaratulasResponseDto) {

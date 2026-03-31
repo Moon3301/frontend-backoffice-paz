@@ -1,10 +1,33 @@
 <div class="surface-card p-5 shadow-2 border-round w-full mb-4">
-    <div class="text-xl font-bold text-paz-white mb-1 uppercase">CARGA DE CARÁTULA/S</div>
-    <p class="text-500 text-sm mb-4">Ingresa el número de carátula y RUT para consultar y registrar el estado desde el Conservador.</p>
+    <div class="flex align-items-start justify-content-between mb-1 flex-wrap gap-3">
+        <div>
+            <div class="text-xl font-bold text-paz-primary uppercase">CARGA DE CARÁTULA/S</div>
+            <p class="text-500 text-sm mt-1 mb-0">Ingresa el número de carátula y RUT para consultar y registrar el estado desde el Conservador.</p>
+        </div>
+
+        <!-- Botón carga batch -->
+        <div class="flex align-items-center gap-2">
+            <button pButton pRipple type="button"
+                    label="Carga Masiva (Excel)"
+                    icon="pi pi-file-excel"
+                    class="p-button-outlined p-button-sm"
+                    style="border-color: #16a34a; color: #16a34a;"
+                    [loading]="isBatchLoading"
+                    [disabled]="isBatchLoading"
+                    (click)="triggerFileInput()"
+                    pTooltip="Sube un Excel con columnas: número de carátula (A) y RUT (B)"
+                    tooltipPosition="left">
+            </button>
+            <!-- Input oculto -->
+            <input #fileInputBatch type="file" accept=".xlsx,.xls" style="display:none;" (change)="onFileSelected($event)" />
+        </div>
+    </div>
+
+    <!-- ───── Feedback carga individual ───── -->
 
     <!-- Success feedback -->
     <div *ngIf="resultadoCarga"
-         class="flex align-items-start gap-3 border-round p-4 mb-4"
+         class="flex align-items-start gap-3 border-round p-4 mb-4 mt-3"
          style="background: #f0fdf4; border: 1px solid #bbf7d0;">
         <i class="pi pi-check-circle text-2xl mt-1" style="color: #16a34a;"></i>
         <div class="flex-1">
@@ -24,7 +47,7 @@
 
     <!-- Error feedback -->
     <div *ngIf="errorCarga"
-         class="flex align-items-start gap-3 border-round p-4 mb-4"
+         class="flex align-items-start gap-3 border-round p-4 mb-4 mt-3"
          style="background: #fff1f2; border: 1px solid #fecdd3;">
         <i class="pi pi-times-circle text-2xl mt-1" style="color: var(--paz-accent-red);"></i>
         <div class="flex-1">
@@ -37,6 +60,128 @@
                 (click)="dismissResult()">
         </button>
     </div>
+
+    <!-- ───── Feedback carga batch ───── -->
+
+    <!-- Batch loading -->
+    <div *ngIf="isBatchLoading"
+         class="flex align-items-center gap-3 border-round p-4 mb-4 mt-3"
+         style="background: #eff6ff; border: 1px solid #bfdbfe;">
+        <i class="pi pi-spin pi-spinner text-2xl" style="color: #2563eb;"></i>
+        <div class="flex-1">
+            <div class="font-bold mb-1" style="color: #1d4ed8;">Procesando lote...</div>
+            <div class="text-sm text-600">
+                Cargando archivo: <span class="font-bold">{{ archivoNombre }}</span>. Por favor espera.
+            </div>
+        </div>
+    </div>
+
+    <!-- Batch success/partial -->
+    <div *ngIf="batchResult && !isBatchLoading"
+         class="border-round mb-4 mt-3 overflow-hidden"
+         style="border: 1px solid #bbf7d0;">
+
+        <!-- Header resumen -->
+        <div class="flex align-items-center gap-3 p-4"
+             style="background: #f0fdf4;">
+            <i class="pi pi-check-circle text-2xl" style="color: #16a34a;"></i>
+            <div class="flex-1">
+                <div class="font-bold mb-1" style="color: #15803d;">
+                    Lote procesado
+                    <span *ngIf="archivoNombre" class="font-normal text-sm text-600"> · {{ archivoNombre }}</span>
+                </div>
+                <div class="flex gap-3 flex-wrap">
+                    <span class="text-sm">
+                        Total: <span class="font-bold text-900">{{ batchResult.total }}</span>
+                    </span>
+                    <span class="text-sm" style="color: #15803d;">
+                        <i class="pi pi-check mr-1"></i>Exitosos: <span class="font-bold">{{ batchResult.exitosos }}</span>
+                    </span>
+                    <span class="text-sm" *ngIf="batchResult.fallidos > 0" style="color: #be123c;">
+                        <i class="pi pi-times mr-1"></i>Con error: <span class="font-bold">{{ batchResult.fallidos }}</span>
+                    </span>
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <button pButton pRipple type="button"
+                        [label]="mostrarDetalleBatch ? 'Ocultar detalle' : 'Ver detalle'"
+                        [icon]="mostrarDetalleBatch ? 'pi pi-chevron-up' : 'pi pi-chevron-down'"
+                        class="p-button-text p-button-sm"
+                        style="color: #15803d;"
+                        (click)="toggleDetalleBatch()">
+                </button>
+                <button pButton pRipple type="button" icon="pi pi-times"
+                        class="p-button-text p-button-sm flex-shrink-0"
+                        style="color: #16a34a;"
+                        (click)="dismissBatchResult()">
+                </button>
+            </div>
+        </div>
+
+        <!-- Tabla detalle colapsable -->
+        <div *ngIf="mostrarDetalleBatch" class="p-3" style="background: #ffffff;">
+            <p-table [value]="getBatchItemRows()"
+                     [scrollable]="true"
+                     scrollHeight="300px"
+                     styleClass="p-datatable-sm p-datatable-gridlines"
+                     [tableStyle]="{'min-width': '40rem'}">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width:60px">#</th>
+                        <th>Carátula</th>
+                        <th>RUT</th>
+                        <th style="width:100px">Estado</th>
+                        <th>Detalle</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-item>
+                    <tr>
+                        <td class="text-center text-sm text-500">{{ item.index + 1 }}</td>
+                        <td class="font-medium text-sm">{{ item.caratula }}</td>
+                        <td class="text-sm">{{ item.rut }}</td>
+                        <td class="text-center">
+                            <p-tag *ngIf="item.status === 'ok'"
+                                   value="OK"
+                                   severity="success"
+                                   [rounded]="true">
+                            </p-tag>
+                            <p-tag *ngIf="item.status === 'error'"
+                                   value="Error"
+                                   severity="danger"
+                                   [rounded]="true">
+                            </p-tag>
+                        </td>
+                        <td class="text-sm">
+                            <span *ngIf="item.status === 'ok'" class="text-600">
+                                {{ item.data?.estado_actual ?? '—' }}
+                            </span>
+                            <span *ngIf="item.status === 'error'" style="color: #be123c;">
+                                {{ item.error }}
+                            </span>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+
+    <!-- Batch error -->
+    <div *ngIf="errorBatch && !isBatchLoading"
+         class="flex align-items-start gap-3 border-round p-4 mb-4 mt-3"
+         style="background: #fff1f2; border: 1px solid #fecdd3;">
+        <i class="pi pi-times-circle text-2xl mt-1" style="color: var(--paz-accent-red);"></i>
+        <div class="flex-1">
+            <div class="font-bold mb-1" style="color: #be123c;">Error en la carga masiva</div>
+            <div class="text-sm text-600">{{ errorBatch }}</div>
+        </div>
+        <button pButton pRipple type="button" icon="pi pi-times"
+                class="p-button-text p-button-sm flex-shrink-0"
+                style="color: var(--paz-accent-red);"
+                (click)="dismissBatchResult()">
+        </button>
+    </div>
+
+    <!-- ───── Formulario individual ───── -->
 
     <form [formGroup]="cargaForm" (ngSubmit)="onGenerate()">
         <div class="flex flex-column md:flex-row gap-4">
@@ -92,4 +237,3 @@
         </div>
     </form>
 </div>
-
