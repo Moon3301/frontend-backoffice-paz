@@ -3,19 +3,18 @@ import { TokenResponseDto } from "../dto/token-response.dto";
 import { firstValueFrom } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import { LoginDto } from "../dto/login.dto";
+import { API_URL } from "../../../environments/environments";
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuthService {
 
-    private readonly URL = 'http://localhost:8999/api';
-
     constructor(private http: HttpClient) { }
 
     async login(loginDto: LoginDto): Promise<TokenResponseDto> {
 
-        const response: TokenResponseDto = await firstValueFrom(this.http.post<TokenResponseDto>(`${this.URL}/auth/login`, loginDto));
+        const response: TokenResponseDto = await firstValueFrom(this.http.post<TokenResponseDto>(`${API_URL}/auth/login`, loginDto));
 
         this.saveToken(response);
 
