@@ -10,11 +10,13 @@ import { API_URL } from "../../../environments/environments";
 })
 export class AuthService {
 
+    private readonly URL = 'http://172.30.201.81:8999/api/auth/login';
+
     constructor(private http: HttpClient) { }
 
     async login(loginDto: LoginDto): Promise<TokenResponseDto> {
 
-        const response: TokenResponseDto = await firstValueFrom(this.http.post<TokenResponseDto>(`${API_URL}/auth/login`, loginDto));
+        const response: TokenResponseDto = await firstValueFrom(this.http.post<TokenResponseDto>(`${this.URL}/auth/login`, loginDto));
 
         this.saveToken(response);
 
