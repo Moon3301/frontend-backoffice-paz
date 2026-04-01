@@ -9,7 +9,7 @@ import { LoginDto } from "../dto/login.dto";
 })
 export class AuthService {
 
-    private readonly URL = 'http://localhost:3000/api';
+    private readonly URL = 'http://localhost:8999/api';
 
     constructor(private http: HttpClient) { }
 
