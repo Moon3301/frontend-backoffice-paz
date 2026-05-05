@@ -1,0 +1,401 @@
+<div class="surface-card p-5 shadow-2 border-round w-full">
+
+    <!-- Encabezado -->
+    <div class="flex align-items-start justify-content-between mb-4 flex-wrap gap-3">
+        <div>
+            <div class="text-xl font-bold text-paz-primary uppercase">INGRESO DE LEAD</div>
+            <p class="text-500 text-sm mt-1 mb-0">Completa el formulario para registrar un nuevo lead en el CRM.</p>
+        </div>
+    </div>
+
+    <!-- Feedback Éxito -->
+    <div *ngIf="resultadoExito"
+         class="flex align-items-start gap-3 border-round p-4 mb-4"
+         style="background: #f0fdf4; border: 1px solid #bbf7d0;">
+        <i class="pi pi-check-circle text-2xl mt-1" style="color: #16a34a;"></i>
+        <div class="flex-1">
+            <div class="font-bold mb-1" style="color: #15803d;">Lead enviado correctamente</div>
+            <div class="text-sm text-600">{{ resultadoExito }}</div>
+        </div>
+        <button pButton pRipple type="button" icon="pi pi-times"
+                class="p-button-text p-button-sm flex-shrink-0"
+                style="color: #16a34a;"
+                (click)="dismissFeedback()">
+        </button>
+    </div>
+
+    <!-- Feedback Error -->
+    <div *ngIf="errorEnvio"
+         class="flex align-items-start gap-3 border-round p-4 mb-4"
+         style="background: #fff1f2; border: 1px solid #fecdd3;">
+        <i class="pi pi-times-circle text-2xl mt-1" style="color: var(--paz-accent-red);"></i>
+        <div class="flex-1">
+            <div class="font-bold mb-1" style="color: #be123c;">Error al enviar el lead</div>
+            <div class="text-sm text-600">{{ errorEnvio }}</div>
+        </div>
+        <button pButton pRipple type="button" icon="pi pi-times"
+                class="p-button-text p-button-sm flex-shrink-0"
+                style="color: var(--paz-accent-red);"
+                (click)="dismissFeedback()">
+        </button>
+    </div>
+
+    <!-- Formulario -->
+    <form [formGroup]="leadForm" (ngSubmit)="onSubmit()">
+
+        <!-- ── Sección 1: Información Personal ── -->
+        <div class="mb-4">
+            <div class="text-sm font-bold text-paz-primary uppercase mb-3 flex align-items-center gap-2">
+                <i class="pi pi-user text-base"></i>
+                Información Personal
+            </div>
+            <div class="grid">
+
+                <!-- RUT -->
+                <div class="col-12 md:col-6 lg:col-3 field mb-3">
+                    <label class="block font-medium text-900 text-sm mb-2 font-bold">
+                        RUT <span style="color: var(--paz-accent-red);">*</span>
+                    </label>
+                    <input pInputText type="text" formControlName="Run"
+                           placeholder="Ej: 12720380-6"
+                           class="w-full"
+                           [ngClass]="{'ng-invalid ng-dirty': f['Run'].invalid && f['Run'].touched}" />
+                    <div *ngIf="f['Run'].invalid && f['Run'].touched" class="mt-1">
+                        <small class="text-red-500 text-xs">
+                            <i class="pi pi-exclamation-circle mr-1"></i>El RUT es obligatorio.
+                        </small>
+                    </div>
+                </div>
+
+                <!-- Nombre -->
+                <div class="col-12 md:col-6 lg:col-3 field mb-3">
+                    <label class="block font-medium text-900 text-sm mb-2 font-bold">
+                        Nombre <span style="color: var(--paz-accent-red);">*</span>
+                    </label>
+                    <input pInputText type="text" formControlName="Nombre"
+                           placeholder="Ej: Álvaro"
+                           class="w-full"
+                           [ngClass]="{'ng-invalid ng-dirty': f['Nombre'].invalid && f['Nombre'].touched}" />
+                    <div *ngIf="f['Nombre'].invalid && f['Nombre'].touched" class="mt-1">
+                        <small class="text-red-500 text-xs">
+                            <i class="pi pi-exclamation-circle mr-1"></i>El nombre es obligatorio.
+                        </small>
+                    </div>
+                </div>
+
+                <!-- Apellido -->
+                <div class="col-12 md:col-6 lg:col-3 field mb-3">
+                    <label class="block font-medium text-900 text-sm mb-2 font-bold">
+                        Apellido <span style="color: var(--paz-accent-red);">*</span>
+                    </label>
+                    <input pInputText type="text" formControlName="Apellido"
+                           placeholder="Ej: Carmona"
+                           class="w-full"
+                           [ngClass]="{'ng-invalid ng-dirty': f['Apellido'].invalid && f['Apellido'].touched}" />
+                    <div *ngIf="f['Apellido'].invalid && f['Apellido'].touched" class="mt-1">
+                        <small class="text-red-500 text-xs">
+                            <i class="pi pi-exclamation-circle mr-1"></i>El apellido es obligatorio.
+                        </small>
+                    </div>
+                </div>
+
+                <!-- Género -->
+                <div class="col-12 md:col-6 lg:col-3 field mb-3">
+                    <label class="block font-medium text-900 text-sm mb-2 font-bold">
+                        Género <span style="color: var(--paz-accent-red);">*</span>
+                    </label>
+                    <p-dropdown formControlName="Genero"
+                                [options]="generoOptions"
+                                optionLabel="label"
+                                optionValue="value"
+                                placeholder="Seleccionar género"
+                                styleClass="w-full"
+                                [ngClass]="{'ng-invalid ng-dirty': f['Genero'].invalid && f['Genero'].touched}">
+                    </p-dropdown>
+                    <div *ngIf="f['Genero'].invalid && f['Genero'].touched" class="mt-1">
+                        <small class="text-red-500 text-xs">
+                            <i class="pi pi-exclamation-circle mr-1"></i>El género es obligatorio.
+                        </small>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Separador -->
+        <hr class="w-full border-top-1 border-none surface-border mb-4">
+
+        <!-- ── Sección 2: Contacto ── -->
+        <div class="mb-4">
+            <div class="text-sm font-bold text-paz-primary uppercase mb-3 flex align-items-center gap-2">
+                <i class="pi pi-envelope text-base"></i>
+                Contacto
+            </div>
+            <div class="grid">
+
+                <!-- Email -->
+                <div class="col-12 md:col-6 field mb-3">
+                    <label class="block font-medium text-900 text-sm mb-2 font-bold">
+                        Email <span style="color: var(--paz-accent-red);">*</span>
+                    </label>
+                    <input pInputText type="email" formControlName="Email"
+                           placeholder="Ej: ejemplo@correo.cl"
+                           class="w-full"
+                           [ngClass]="{'ng-invalid ng-dirty': f['Email'].invalid && f['Email'].touched}" />
+                    <div *ngIf="f['Email'].invalid && f['Email'].touched" class="mt-1">
+                        <small class="text-red-500 text-xs" *ngIf="f['Email'].errors?.['required']">
+                            <i class="pi pi-exclamation-circle mr-1"></i>El email es obligatorio.
+                        </small>
+                        <small class="text-red-500 text-xs" *ngIf="f['Email'].errors?.['email']">
+                            <i class="pi pi-exclamation-circle mr-1"></i>Ingresa un email válido.
+                        </small>
+                    </div>
+                </div>
+
+                <!-- Teléfono -->
+                <div class="col-12 md:col-6 field mb-3">
+                    <label class="block font-medium text-900 text-sm mb-2 font-bold">
+                        Teléfono <span style="color: var(--paz-accent-red);">*</span>
+                    </label>
+                    <input pInputText type="text" formControlName="Fono"
+                           placeholder="Ej: 984094595"
+                           class="w-full"
+                           [ngClass]="{'ng-invalid ng-dirty': f['Fono'].invalid && f['Fono'].touched}" />
+                    <div *ngIf="f['Fono'].invalid && f['Fono'].touched" class="mt-1">
+                        <small class="text-red-500 text-xs">
+                            <i class="pi pi-exclamation-circle mr-1"></i>El teléfono es obligatorio.
+                        </small>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Separador -->
+        <hr class="w-full border-top-1 border-none surface-border mb-4">
+
+        <!-- ── Sección 3: Proyecto y Ubicación ── -->
+        <div class="mb-4">
+            <div class="text-sm font-bold text-paz-primary uppercase mb-3 flex align-items-center gap-2">
+                <i class="pi pi-building text-base"></i>
+                Proyecto y Ubicación
+                <span class="font-normal text-400 text-xs normal-case" style="text-transform: none;">
+                    (al seleccionar proyecto se completan automáticamente la comuna y el Origen 2)
+                </span>
+            </div>
+            <div class="grid">
+
+                <!-- Proyecto -->
+                <div class="col-12 md:col-6 field mb-3">
+                    <label class="block font-medium text-900 text-sm mb-2 font-bold">
+                        Proyecto <span style="color: var(--paz-accent-red);">*</span>
+                    </label>
+                    <p-dropdown formControlName="proyectoSelected"
+                                [options]="proyectoOptions"
+                                optionLabel="label"
+                                optionValue="value"
+                                placeholder="Seleccionar proyecto"
+                                styleClass="w-full"
+                                [filter]="true"
+                                filterPlaceholder="Buscar proyecto..."
+                                [showClear]="true"
+                                (onChange)="onProyectoChange($event)"
+                                [ngClass]="{'ng-invalid ng-dirty': f['proyectoSelected'].invalid && f['proyectoSelected'].touched}">
+                    </p-dropdown>
+                    <div *ngIf="f['proyectoSelected'].invalid && f['proyectoSelected'].touched" class="mt-1">
+                        <small class="text-red-500 text-xs">
+                            <i class="pi pi-exclamation-circle mr-1"></i>El proyecto es obligatorio.
+                        </small>
+                    </div>
+                </div>
+
+                <!-- Comuna (auto-relleno por proyecto, editable manualmente) -->
+                <div class="col-12 md:col-6 field mb-3">
+                    <label class="block font-medium text-900 text-sm mb-2 font-bold">
+                        Comuna <span style="color: var(--paz-accent-red);">*</span>
+                    </label>
+                    <p-dropdown formControlName="comunaSelected"
+                                [options]="comunaOptions"
+                                optionLabel="label"
+                                optionValue="value"
+                                placeholder="Se completa al elegir proyecto"
+                                styleClass="w-full"
+                                [filter]="true"
+                                filterPlaceholder="Buscar comuna..."
+                                [showClear]="true"
+                                [ngClass]="{'ng-invalid ng-dirty': f['comunaSelected'].invalid && f['comunaSelected'].touched}">
+                    </p-dropdown>
+                    <div *ngIf="f['comunaSelected'].invalid && f['comunaSelected'].touched" class="mt-1">
+                        <small class="text-red-500 text-xs">
+                            <i class="pi pi-exclamation-circle mr-1"></i>La comuna es obligatoria.
+                        </small>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Separador -->
+        <hr class="w-full border-top-1 border-none surface-border mb-4">
+
+        <!-- ── Sección 4: Origen y Canal ── -->
+        <div class="mb-4">
+            <div class="text-sm font-bold text-paz-primary uppercase mb-3 flex align-items-center gap-2">
+                <i class="pi pi-sitemap text-base"></i>
+                Origen y Canal
+            </div>
+            <div class="grid">
+
+                <!-- Origen 1 -->
+                <div class="col-12 md:col-6 lg:col-3 field mb-3">
+                    <label class="block font-medium text-900 text-sm mb-2 font-bold">
+                        Origen 1 <span style="color: var(--paz-accent-red);">*</span>
+                    </label>
+                    <p-dropdown formControlName="Origen1"
+                                [options]="origen1Options"
+                                optionLabel="label"
+                                optionValue="value"
+                                placeholder="Seleccionar canal"
+                                styleClass="w-full"
+                                [filter]="true"
+                                filterPlaceholder="Buscar canal..."
+                                [showClear]="true"
+                                [ngClass]="{'ng-invalid ng-dirty': f['Origen1'].invalid && f['Origen1'].touched}">
+                    </p-dropdown>
+                    <div *ngIf="f['Origen1'].invalid && f['Origen1'].touched" class="mt-1">
+                        <small class="text-red-500 text-xs">
+                            <i class="pi pi-exclamation-circle mr-1"></i>El origen 1 es obligatorio.
+                        </small>
+                    </div>
+                </div>
+
+                <!-- Origen 2 (auto-relleno por proyecto, editable manualmente) -->
+                <div class="col-12 md:col-6 lg:col-3 field mb-3">
+                    <label class="block font-medium text-900 text-sm mb-2 font-bold">
+                        Origen 2 <span style="color: var(--paz-accent-red);">*</span>
+                    </label>
+                    <p-dropdown formControlName="Origen2"
+                                [options]="origen2Options"
+                                optionLabel="label"
+                                optionValue="value"
+                                placeholder="Se completa al elegir proyecto"
+                                styleClass="w-full"
+                                [showClear]="true"
+                                [ngClass]="{'ng-invalid ng-dirty': f['Origen2'].invalid && f['Origen2'].touched}">
+                    </p-dropdown>
+                    <div *ngIf="f['Origen2'].invalid && f['Origen2'].touched" class="mt-1">
+                        <small class="text-red-500 text-xs">
+                            <i class="pi pi-exclamation-circle mr-1"></i>El origen 2 es obligatorio.
+                        </small>
+                    </div>
+                </div>
+
+                <!-- Fuente -->
+                <div class="col-12 md:col-6 lg:col-3 field mb-3">
+                    <label class="block font-medium text-900 text-sm mb-2 font-bold">
+                        Fuente <span style="color: var(--paz-accent-red);">*</span>
+                    </label>
+                    <p-dropdown formControlName="Fuente"
+                                [options]="fuenteOptions"
+                                optionLabel="label"
+                                optionValue="value"
+                                placeholder="Seleccionar fuente"
+                                styleClass="w-full"
+                                [filter]="true"
+                                filterPlaceholder="Buscar fuente..."
+                                [showClear]="true"
+                                [ngClass]="{'ng-invalid ng-dirty': f['Fuente'].invalid && f['Fuente'].touched}">
+                    </p-dropdown>
+                    <div *ngIf="f['Fuente'].invalid && f['Fuente'].touched" class="mt-1">
+                        <small class="text-red-500 text-xs">
+                            <i class="pi pi-exclamation-circle mr-1"></i>La fuente es obligatoria.
+                        </small>
+                    </div>
+                </div>
+
+                <!-- Tipo Lead -->
+                <div class="col-12 md:col-6 lg:col-3 field mb-3">
+                    <label class="block font-medium text-900 text-sm mb-2 font-bold">
+                        Tipo de Lead <span style="color: var(--paz-accent-red);">*</span>
+                    </label>
+                    <p-dropdown formControlName="Tipolead"
+                                [options]="tipoLeadOptions"
+                                optionLabel="label"
+                                optionValue="value"
+                                placeholder="Seleccionar tipo"
+                                styleClass="w-full"
+                                [showClear]="true"
+                                [ngClass]="{'ng-invalid ng-dirty': f['Tipolead'].invalid && f['Tipolead'].touched}">
+                        <ng-template pTemplate="empty">
+                            <div class="text-500 text-sm p-2 text-center">
+                                <i class="pi pi-info-circle mr-1"></i>
+                                Tipos pendientes de configuración
+                            </div>
+                        </ng-template>
+                    </p-dropdown>
+                    <div *ngIf="f['Tipolead'].invalid && f['Tipolead'].touched" class="mt-1">
+                        <small class="text-red-500 text-xs">
+                            <i class="pi pi-exclamation-circle mr-1"></i>El tipo de lead es obligatorio.
+                        </small>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Separador -->
+        <hr class="w-full border-top-1 border-none surface-border mb-4">
+
+        <!-- ── Sección 5: Fecha y Observaciones ── -->
+        <div class="mb-4">
+            <div class="text-sm font-bold text-paz-primary uppercase mb-3 flex align-items-center gap-2">
+                <i class="pi pi-calendar text-base"></i>
+                Fecha y Observaciones
+            </div>
+            <div class="grid">
+
+                <!-- Fecha Lead Externo -->
+                <div class="col-12 md:col-6 field mb-3">
+                    <label class="block font-medium text-900 text-sm mb-2 font-bold">
+                        Fecha del Lead <span style="color: var(--paz-accent-red);">*</span>
+                    </label>
+                    <input type="datetime-local" formControlName="FechaLeadExterno_KUT"
+                           pInputText
+                           class="w-full"
+                           [ngClass]="{'ng-invalid ng-dirty': f['FechaLeadExterno_KUT'].invalid && f['FechaLeadExterno_KUT'].touched}" />
+                    <div *ngIf="f['FechaLeadExterno_KUT'].invalid && f['FechaLeadExterno_KUT'].touched" class="mt-1">
+                        <small class="text-red-500 text-xs">
+                            <i class="pi pi-exclamation-circle mr-1"></i>La fecha del lead es obligatoria.
+                        </small>
+                    </div>
+                </div>
+
+                <!-- Observación -->
+                <div class="col-12 md:col-6 field mb-3">
+                    <label class="block font-medium text-900 text-sm mb-2 font-bold">
+                        Observación
+                    </label>
+                    <textarea formControlName="Observacion"
+                              rows="3"
+                              placeholder="Ingresa observaciones adicionales..."
+                              class="w-full p-inputtext"
+                              style="resize: vertical; font-family: inherit; font-size: inherit;">
+                    </textarea>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ── Botón Submit ── -->
+        <div class="flex justify-content-end">
+            <button pButton pRipple type="submit"
+                    label="Enviar Lead al CRM"
+                    icon="pi pi-send"
+                    class="p-button-primary"
+                    [loading]="isLoading"
+                    [disabled]="isLoading">
+            </button>
+        </div>
+
+    </form>
+</div>

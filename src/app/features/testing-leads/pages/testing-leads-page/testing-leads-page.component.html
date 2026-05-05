@@ -1,0 +1,16 @@
+<div class="flex flex-column gap-4">
+
+    <!-- Breadcrumb -->
+    <div class="flex align-items-center mb-2">
+        <button pButton pRipple icon="pi pi-briefcase"
+                class="p-button-rounded bg-paz-primary text-paz-primary-text border-none p-3 shadow-2 mr-4">
+        </button>
+        <span class="text-600 font-medium">
+            Testing Leads / <span class="text-700 font-bold">Ingreso de Lead</span>
+        </span>
+    </div>
+
+    <!-- Formulario -->
+    <app-crear-lead (leadCreado)="onLeadCreado()"></app-crear-lead>
+
+</div>

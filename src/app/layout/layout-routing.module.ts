@@ -23,6 +23,10 @@ const routes: Routes = [
       {
         path: 'copropiedad',
         loadChildren: () => import('../features/copropiedad/copropiedad.module').then(m => m.CopropiedadModule)
+      },
+      {
+        path: 'leads',
+        loadChildren: () => import('../features/testing-leads/testing-leads.module').then(m => m.TestingLeadsModule)
       }
     ]
   }
