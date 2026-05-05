@@ -1,8 +1,0 @@
-{
-  "/api": {
-    "target": "https://apicrmqas.paz.cl",
-    "secure": false,
-    "changeOrigin": true,
-    "logLevel": "debug"
-  }
-}
