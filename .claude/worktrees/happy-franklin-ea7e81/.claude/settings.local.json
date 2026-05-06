@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "Bash(xargs grep *)",
+      "Bash(git -C \"C:/Users/CarlosAcevedo/Desktop/env-dev/frontend-backoffice-paz\" status --short)",
+      "Bash(git -C \"C:/Users/CarlosAcevedo/Desktop/env-dev/frontend-backoffice-paz\" branch)",
+      "Bash(git -C \"C:/Users/CarlosAcevedo/Desktop/env-dev/frontend-backoffice-paz/.claude/worktrees/happy-franklin-ea7e81\" status --short)",
+      "Bash(git -C \"C:/Users/CarlosAcevedo/Desktop/env-dev/frontend-backoffice-paz/.claude/worktrees/happy-franklin-ea7e81\" branch)",
+      "Bash(git -C \"C:/Users/CarlosAcevedo/Desktop/env-dev/frontend-backoffice-paz\" diff --stat)",
+      "Bash(xargs ls *)",
+      "Bash(xargs cat *)",
+      "Bash(git -C C:/Users/CarlosAcevedo/Desktop/env-dev/frontend-backoffice-paz add src/app/app.component.html src/app/app.module.ts src/app/auth/pages/login-page/login-page.component.html src/app/auth/pages/login-page/login-page.component.ts src/app/shared/shared.module.ts src/app/core/services/loading.service.ts src/app/shared/components/loading-overlay/)",
+      "Bash(git -C C:/Users/CarlosAcevedo/Desktop/env-dev/frontend-backoffice-paz commit -m ' *)",
+      "Bash(git -C \"C:/Users/CarlosAcevedo/Desktop/env-dev/frontend-backoffice-paz\" add src/app/auth/pages/login-page/login-page.component.ts)",
+      "Bash(git -C C:/Users/CarlosAcevedo/Desktop/env-dev/frontend-backoffice-paz commit -m 'fix: spinner del login no se cierra al redirigir a /home *)",
+      "Bash(git -C \"C:/Users/CarlosAcevedo/Desktop/env-dev/frontend-backoffice-paz\" push origin main)"
+    ]
+  }
+}

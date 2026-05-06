@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { LoadingService } from '../../../core/services/loading.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-loading-overlay',
@@ -8,6 +9,9 @@ import { LoadingService } from '../../../core/services/loading.service';
   styleUrl: './loading-overlay.component.css'
 })
 export class LoadingOverlayComponent {
-  readonly isLoading$ = this.loadingService.isLoading$;
-  constructor(private loadingService: LoadingService) {}
+  isLoading$!: Observable<boolean>;
+
+  constructor(private loadingService: LoadingService) {
+    this.isLoading$ = this.loadingService.isLoading$;
+  }
 }
