@@ -183,21 +183,88 @@ html.dark-theme .paz-header-container {
     background-color: var(--paz-bg-card-hover) !important;
 }
 
-/* Dropdown styling */
-html.dark-theme .p-inputtext,
-html.dark-theme .p-dropdown {
-    background-color: #18181b !important;
-    border-color: var(--paz-border-color) !important;
-    color: var(--paz-text-primary) !important;
+/* ── Input / Select – dark mode (PrimeNG v19)
+   PrimeNG v19 usa --p-select-* y --p-inputtext-* como tokens internos.
+   Sobreescribimos esos tokens CON más especificidad que el :root.dark-theme
+   que genera PrimeNG, y además añadimos reglas de clase como red de seguridad.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/* 1 ─ Tokens PrimeNG: especificidad html:root.dark-theme > :root.dark-theme */
+html:root.dark-theme {
+    --p-inputtext-color:             #fafafa;
+    --p-inputtext-background:        #18181b;
+    --p-inputtext-border-color:      #27272a;
+    --p-inputtext-placeholder-color: #52525b;
+
+    --p-select-color:                       #fafafa;
+    --p-select-background:                  #18181b;
+    --p-select-border-color:                #27272a;
+    --p-select-placeholder-color:           #52525b;
+    --p-select-dropdown-color:              #a1a1aa;
+
+    --p-select-overlay-background:          #18181b;
+    --p-select-overlay-border-color:        #27272a;
+    --p-select-overlay-color:               #fafafa;
+
+    --p-select-option-color:                #fafafa;
+    --p-select-option-focus-background:     #27272a;
+    --p-select-option-focus-color:          #fafafa;
+    --p-select-option-selected-background:  #3f3f46;
+    --p-select-option-selected-color:       #fafafa;
+    --p-select-option-selected-focus-background: #3f3f46;
+    --p-select-option-selected-focus-color: #fafafa;
+    --p-select-option-group-background:     #18181b;
+    --p-select-option-group-color:          #a1a1aa;
+
+    --p-textarea-color:                     #fafafa;
+    --p-textarea-background:                #18181b;
+    --p-textarea-border-color:              #27272a;
 }
-html.dark-theme .p-dropdown-panel,
-html.dark-theme .p-dropdown-items-wrapper {
+
+/* 2 ─ Reglas de clase como red de seguridad */
+html.dark-theme .p-inputtext {
     background-color: #18181b !important;
-    color: var(--paz-text-primary) !important;
-    border: 1px solid var(--paz-border-color);
+    border-color:     #27272a !important;
+    color:            #fafafa !important;
 }
-html.dark-theme .p-dropdown-item:hover {
-    background-color: #27272a !important;
+html.dark-theme .p-inputtext::placeholder { color: #52525b !important; }
+
+html.dark-theme .p-select {
+    background-color: #18181b !important;
+    border-color:     #27272a !important;
+}
+html.dark-theme .p-select .p-select-label          { color: #fafafa !important; }
+html.dark-theme .p-select .p-select-label.p-placeholder { color: #52525b !important; }
+html.dark-theme .p-select .p-select-dropdown        { color: #a1a1aa !important; }
+
+html.dark-theme .p-select-overlay {
+    background-color: #18181b !important;
+    border:           1px solid #27272a !important;
+    color:            #fafafa !important;
+}
+html.dark-theme .p-select-overlay .p-select-header  { background-color: #18181b !important; border-color: #27272a !important; }
+html.dark-theme .p-select-overlay .p-select-filter,
+html.dark-theme .p-select-overlay .p-inputtext      { background-color: #27272a !important; border-color: #3f3f46 !important; color: #fafafa !important; }
+html.dark-theme .p-select-list-container,
+html.dark-theme .p-select-list                      { background-color: #18181b !important; }
+html.dark-theme .p-select-option                    { color: #fafafa !important; background-color: transparent !important; }
+html.dark-theme .p-select-option:hover,
+html.dark-theme .p-select-option.p-focus            { background-color: #27272a !important; color: #fafafa !important; }
+html.dark-theme .p-select-option.p-select-option-selected { background-color: #3f3f46 !important; color: #fafafa !important; }
+
+html.dark-theme textarea.p-inputtext {
+    background-color: #18181b !important;
+    border-color:     #27272a !important;
+    color:            #fafafa !important;
+}
+html.dark-theme textarea.p-inputtext::placeholder   { color: #52525b !important; }
+
+html.dark-theme input[type="datetime-local"].p-inputtext,
+html.dark-theme input[type="date"].p-inputtext,
+html.dark-theme input[type="time"].p-inputtext {
+    color-scheme:     dark;
+    color:            #fafafa !important;
+    background-color: #18181b !important;
 }
 
 /* Paginator */

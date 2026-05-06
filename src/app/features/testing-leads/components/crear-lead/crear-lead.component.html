@@ -57,8 +57,10 @@
                         RUT <span style="color: var(--paz-accent-red);">*</span>
                     </label>
                     <input pInputText type="text" formControlName="Run"
-                           placeholder="Ej: 12720380-6"
+                           placeholder="Ej: 11111111-1"
                            class="w-full"
+                           maxlength="10"
+                           (input)="onRutInput($event)"
                            [ngClass]="{'ng-invalid ng-dirty': f['Run'].invalid && f['Run'].touched}" />
                     <div *ngIf="f['Run'].invalid && f['Run'].touched" class="mt-1">
                         <small class="text-red-500 text-xs">
@@ -73,7 +75,7 @@
                         Nombre <span style="color: var(--paz-accent-red);">*</span>
                     </label>
                     <input pInputText type="text" formControlName="Nombre"
-                           placeholder="Ej: Álvaro"
+                           placeholder="Nombre"
                            class="w-full"
                            [ngClass]="{'ng-invalid ng-dirty': f['Nombre'].invalid && f['Nombre'].touched}" />
                     <div *ngIf="f['Nombre'].invalid && f['Nombre'].touched" class="mt-1">
@@ -89,7 +91,7 @@
                         Apellido <span style="color: var(--paz-accent-red);">*</span>
                     </label>
                     <input pInputText type="text" formControlName="Apellido"
-                           placeholder="Ej: Carmona"
+                           placeholder="Apellido"
                            class="w-full"
                            [ngClass]="{'ng-invalid ng-dirty': f['Apellido'].invalid && f['Apellido'].touched}" />
                     <div *ngIf="f['Apellido'].invalid && f['Apellido'].touched" class="mt-1">

@@ -182,6 +182,20 @@ export class CrearLeadComponent {
 
   get f() { return this.leadForm.controls; }
 
+  onRutInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    // Solo dígitos y K/k, máximo 9 caracteres base (8 dígitos + 1 verificador)
+    let raw = input.value.replace(/[^0-9kK]/g, '').toUpperCase();
+    if (raw.length > 9) raw = raw.slice(0, 9);
+
+    const formatted = raw.length > 1
+      ? raw.slice(0, -1) + '-' + raw.slice(-1)
+      : raw;
+
+    input.value = formatted;
+    this.leadForm.get('Run')!.setValue(formatted, { emitEvent: false });
+  }
+
   // Al seleccionar proyecto → auto-rellena Comuna y Origen 2
   onProyectoChange(event: { value: string | null }) {
     const proyecto = event.value ? this.proyectoDataMap.get(event.value) : null;
