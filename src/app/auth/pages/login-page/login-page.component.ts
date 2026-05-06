@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
-import { LoadingService } from '../../../core/services/loading.service';
 
 @Component({
   selector: 'app-login-page',
@@ -19,8 +18,7 @@ export class LoginPageComponent {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router,
-    private loadingService: LoadingService
+    private router: Router
   ) {
     this.loginForm = this.fb.group({
       email:      ['', [Validators.required, Validators.email]],
@@ -37,7 +35,6 @@ export class LoginPageComponent {
 
     this.isLoading = true;
     this.loginError = null;
-    this.loadingService.show();
 
     try {
       const response = await this.authService.login(this.loginForm.value);
@@ -46,7 +43,6 @@ export class LoginPageComponent {
       }
     } catch (err: any) {
       this.loginError = err?.error?.message ?? 'Credenciales incorrectas. Verifica tu correo y contraseña.';
-      this.loadingService.hide();
     } finally {
       this.isLoading = false;
     }
