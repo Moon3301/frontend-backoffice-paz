@@ -1,12 +1,14 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ThemeToggleComponent } from './components/theme-toggle/theme-toggle.component';
+import { LoadingOverlayComponent } from './components/loading-overlay/loading-overlay.component';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 
 @NgModule({
   declarations: [
-    ThemeToggleComponent
+    ThemeToggleComponent,
+    LoadingOverlayComponent
   ],
   imports: [
     CommonModule,
@@ -14,7 +16,8 @@ import { TooltipModule } from 'primeng/tooltip';
     TooltipModule
   ],
   exports: [
-    ThemeToggleComponent
+    ThemeToggleComponent,
+    LoadingOverlayComponent
   ]
 })
 export class SharedModule { }

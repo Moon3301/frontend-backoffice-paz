@@ -1,0 +1,48 @@
+.paz-loading-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(3px);
+  animation: paz-fade-in 0.15s ease;
+}
+
+@keyframes paz-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.paz-loading-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  background: var(--paz-bg-card, #ffffff);
+  border: 1px solid var(--paz-border-color, #e2e8f0);
+  border-radius: 1rem;
+  padding: 2rem 2.5rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.paz-spinner-ring {
+  width: 48px;
+  height: 48px;
+  border: 4px solid var(--paz-border-color, #e2e8f0);
+  border-top-color: var(--paz-primary, #0f172a);
+  border-radius: 50%;
+  animation: paz-spin 0.7s linear infinite;
+}
+
+@keyframes paz-spin {
+  to { transform: rotate(360deg); }
+}
+
+.paz-loading-text {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--paz-text-secondary, #475569);
+  letter-spacing: 0.02em;
+}

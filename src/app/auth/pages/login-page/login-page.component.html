@@ -39,7 +39,21 @@
                 <a routerLink="/auth/recuperar-contrasena" class="font-medium no-underline ml-2 text-white text-right cursor-pointer">¿Olvidaste tu contraseña?</a>
             </div>
 
-            <button pButton pRipple label="Iniciar Sesión" icon="pi pi-sign-in" class="w-full p-3 text-xl"></button>
+            <!-- Error de credenciales -->
+            <div *ngIf="loginError"
+                 class="flex align-items-center gap-2 border-round p-3 mb-4"
+                 style="background: #fff1f2; border: 1px solid #fecdd3;">
+                <i class="pi pi-exclamation-circle" style="color: var(--paz-accent-red);"></i>
+                <span class="text-sm" style="color: #be123c;">{{ loginError }}</span>
+            </div>
+
+            <button pButton pRipple
+                    label="Iniciar Sesión"
+                    icon="pi pi-sign-in"
+                    class="w-full p-3 text-xl"
+                    [loading]="isLoading"
+                    [disabled]="isLoading">
+            </button>
         </form>
 
         <div class="text-center mt-5">
