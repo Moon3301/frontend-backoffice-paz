@@ -10,7 +10,7 @@ import { API_URL } from "../../../environments/environments";
 })
 export class AuthService {
 
-    private readonly URL = 'http://172.30.201.81:8999/api';
+    private readonly URL = API_URL;
 
     constructor(private http: HttpClient) { }
 
