@@ -10,17 +10,25 @@ export type CaratulasResponseDto = {
     seccion_nombre: string;
     fecha_estado: string;
     historiales: CaratulaHistorial[];
+    movimientos: CaratulaMovimiento[];
     documentos: Documento[];
     createdAt: Date;
     updatedAt: Date;
 }
-
 
 export type CaratulaHistorial = {
     id: number;
     estado_registrado: string;
     observacion: string;
     fecha_registro: string;
+}
+
+export type CaratulaMovimiento = {
+    id: number;
+    seccionCodigo: string;
+    seccionDescripcion: string;
+    fechaMovimiento: string;
+    createdAt: Date;
 }
 
 export type Documento = {

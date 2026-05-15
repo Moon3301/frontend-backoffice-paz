@@ -25,6 +25,15 @@ export class ModalCaratulaComponent {
     this.visibleChange.emit(false);
   }
 
+  getFechaMovimiento(fechaMovimiento: string): { fecha: string; hora: string } {
+    if (!fechaMovimiento) return { fecha: '—', hora: '—' };
+    const partes = fechaMovimiento.split(' ');
+    return {
+      fecha: partes[0] ?? fechaMovimiento,
+      hora: partes[1] ?? ''
+    };
+  }
+
   getEstadoStyle(estado: string): { [key: string]: string } {
     switch (estado) {
       case 'Finalizada':
