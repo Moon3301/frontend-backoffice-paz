@@ -342,6 +342,64 @@
                     </div>
                 </div>
 
+                
+                
+            </div>
+        </div>
+
+        <!-- Separador -->
+        <hr class="w-full border-top-1 border-none surface-border mb-4">
+
+        <div class="mb-4">
+            <div class="text-sm font-bold text-paz-primary uppercase mb-3 flex align-items-center gap-2">
+                <i class="pi pi-sitemap text-base"></i>
+                Campana y Medio
+            </div>
+            <div class="grid">
+
+                <!-- Campana -->
+                <div class="col-12 md:col-6 lg:col-3 field mb-3">
+                    <label class="block font-medium text-900 text-sm mb-2 font-bold">
+                        Campaña <span style="color: var(--paz-accent-red);">*</span>
+                    </label>
+                    <input pInputText type="text" formControlName="Campana"
+                            placeholder="Ej: Black Week 2026"
+                            class="w-full"
+                            [ngClass]="{'ng-invalid ng-dirty': f['Campana'].invalid && f['Campana'].touched}" />
+                    <div *ngIf="f['Campana'].invalid && f['Campana'].touched" class="mt-1">
+                        <small class="text-red-500 text-xs" *ngIf="f['Campana'].errors?.['required']">
+                            <i class="pi pi-exclamation-circle mr-1"></i>La campaña es obligatoria.
+                        </small>
+                    </div>
+                </div>
+
+                <!-- Medio -->
+                <div class="col-12 md:col-6 lg:col-3 field mb-3">
+                    <label class="block font-medium text-900 text-sm mb-2 font-bold">
+                        Medio <span style="color: var(--paz-accent-red);">*</span>
+                    </label>
+                    <input pInputText type="text" formControlName="Medio"
+                            placeholder="Ej: Formulario Landing Page"
+                            class="w-full"
+                            [ngClass]="{'ng-invalid ng-dirty': f['Medio'].invalid && f['Medio'].touched}" />
+                    <div *ngIf="f['Medio'].invalid && f['Medio'].touched" class="mt-1">
+                        <small class="text-red-500 text-xs" *ngIf="f['Medio'].errors?.['required']">
+                            <i class="pi pi-exclamation-circle mr-1"></i>El medio es obligatorio.
+                        </small>
+                    </div>
+                </div>
+
+                <!-- Corredor -->
+                <div class="col-12 md:col-6 lg:col-3 field mb-3">
+                    <label class="block font-medium text-900 text-sm mb-2 font-bold">
+                        Corredor <span style="color: var(--paz-accent-red);">*</span>
+                    </label>
+                    <div class="flex align-items-center gap-2">
+                        <p-checkbox value="Si" formControlName="Corredor" />
+                        <span>¿Es corredor?</span>
+                    </div>
+                </div>
+
             </div>
         </div>
 

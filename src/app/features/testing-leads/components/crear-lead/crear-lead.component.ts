@@ -137,6 +137,8 @@ export class CrearLeadComponent {
     { label: 'Minisitio Subsidio a la Tasa',          value: 'Minisitio Subsidio a la Tasa' },
   ];
 
+
+
   tipoLeadOptions: SelectOption[] = [
     { label: 'Lidz',                  value: 'Lidz' },
     { label: 'SVO',                   value: 'SVO' },
@@ -176,7 +178,10 @@ export class CrearLeadComponent {
       Fuente:               ['', [Validators.required]],
       Tipolead:             ['', [Validators.required]],
       Genero:               [null, [Validators.required]],
-      FechaLeadExterno_KUT: ['', [Validators.required]]
+      FechaLeadExterno_KUT: ['', [Validators.required]],
+      Campana:              ['', [Validators.required]],
+      Medio:                ['', [Validators.required]],
+      Corredor:             [false],
     });
   }
 
@@ -244,9 +249,9 @@ export class CrearLeadComponent {
       Titulo:                 `Lead ${v.Nombre.trim()} ${v.Apellido.trim()}, ${fechaHoy}`,
       Uf:                     0,
       Depto:                  '',
-      Campana:                '',
+      Campana:                v.Campana.trim(),
       Fuente:                 v.Fuente.trim(),
-      Medio:                  '',
+      Medio:                  v.Medio.trim(),
       Tipolead:               v.Tipolead,
       Dormitorios:            '',
       TituloVisita:           '',
@@ -261,8 +266,10 @@ export class CrearLeadComponent {
       VisitaOwner:            '',
       Propietario:            '',
       Clasificacion:          '',
-      Corredor:               false
+      Corredor:               v.Corredor ? 1 : 0
     };
+
+    console.log('payload', payload);
 
     try {
       await this.testingLeadsService.crearLead(payload as any);
