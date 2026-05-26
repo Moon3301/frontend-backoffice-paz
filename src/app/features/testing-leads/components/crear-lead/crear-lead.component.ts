@@ -137,7 +137,14 @@ export class CrearLeadComponent {
     { label: 'Minisitio Subsidio a la Tasa',          value: 'Minisitio Subsidio a la Tasa' },
   ];
 
-
+  tipologias: SelectOption[] = [
+    { label: '1 Dormitorio', value:'Z01'},
+    { label: '2 Dormitorios', value:'Z02'},
+    { label: '3 Dormitorios', value:'Z03'},
+    { label: '4 Dormitorios', value:'Z04'},
+    { label: '5 Dormitorios', value:'Z05'},
+    { label: '6 Dormitorios', value:'Z06'},
+  ]
 
   tipoLeadOptions: SelectOption[] = [
     { label: 'Lidz',                  value: 'Lidz' },
@@ -182,6 +189,7 @@ export class CrearLeadComponent {
       Campana:              ['', [Validators.required]],
       Medio:                ['', [Validators.required]],
       Corredor:             [false],
+      Tipologia:            [null, [Validators.required]],
     });
   }
 
@@ -253,7 +261,7 @@ export class CrearLeadComponent {
       Fuente:                 v.Fuente.trim(),
       Medio:                  v.Medio.trim(),
       Tipolead:               v.Tipolead,
-      Dormitorios:            '',
+      Dormitorios:            v.Tipologia,
       TituloVisita:           '',
       Salaventa:              '',
       TipoVisita:             '',
@@ -266,7 +274,7 @@ export class CrearLeadComponent {
       VisitaOwner:            '',
       Propietario:            '',
       Clasificacion:          '',
-      Corredor:               v.Corredor ? 1 : 0
+      Corredor:               v.Corredor ? 1 : 0,
     };
 
     console.log('payload', payload);

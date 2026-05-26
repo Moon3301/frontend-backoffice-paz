@@ -390,13 +390,39 @@
                 </div>
 
                 <!-- Corredor -->
-                <div class="col-12 md:col-6 lg:col-3 field mb-3">
-                    <label class="block font-medium text-900 text-sm mb-2 font-bold">
+                <div class="col-12 md:col-6 lg:col-3 field mb-3" style="display: flex; flex-direction: column; align-items: center;">
+                    <label class="block font-medium text-900 text-sm mb-2 font-bold" style="text-align: start;">
                         Corredor <span style="color: var(--paz-accent-red);">*</span>
                     </label>
                     <div class="flex align-items-center gap-2">
                         <p-checkbox value="Si" formControlName="Corredor" />
                         <span>¿Es corredor?</span>
+                    </div>
+                </div>
+
+                <div class="col-12 md:col-6 lg:col-3 field mb-3">
+                    <label class="block font-medium text-900 text-sm mb-2 font-bold">
+                        Tipología <span style="color: var(--paz-accent-red);">*</span>
+                    </label>
+                    <p-dropdown formControlName="Tipologia"
+                                [options]="tipologias"
+                                optionLabel="label"
+                                optionValue="value"
+                                placeholder="Seleccionar tipología"
+                                styleClass="w-full"
+                                [showClear]="true"
+                                [ngClass]="{'ng-invalid ng-dirty': f['Tipologia'].invalid && f['Tipologia'].touched}">
+                        <ng-template pTemplate="empty">
+                            <div class="text-500 text-sm p-2 text-center">
+                                <i class="pi pi-info-circle mr-1"></i>
+                                Tipos pendientes de configuración
+                            </div>
+                        </ng-template>
+                    </p-dropdown>
+                    <div *ngIf="f['Tipologia'].invalid && f['Tipologia'].touched" class="mt-1">
+                        <small class="text-red-500 text-xs">
+                            <i class="pi pi-exclamation-circle mr-1"></i>La tipología es obligatoria.
+                        </small>
                     </div>
                 </div>
 
