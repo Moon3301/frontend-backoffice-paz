@@ -138,12 +138,12 @@ export class CrearLeadComponent {
   ];
 
   tipologias: SelectOption[] = [
-    { label: '1 Dormitorio', value:'Z01'},
-    { label: '2 Dormitorios', value:'Z02'},
-    { label: '3 Dormitorios', value:'Z03'},
-    { label: '4 Dormitorios', value:'Z04'},
-    { label: '5 Dormitorios', value:'Z05'},
-    { label: '6 Dormitorios', value:'Z06'},
+    { label: '1 Dormitorio', value:'1 Dormitorio'},
+    { label: '2 Dormitorios', value:'2 Dormitorios'},
+    { label: '3 Dormitorios', value:'3 Dormitorios'},
+    { label: '4 Dormitorios', value:'4 Dormitorios'},
+    { label: '5 Dormitorios', value:'5 Dormitorios'},
+    { label: '6 Dormitorios', value:'6 Dormitorios'},
   ]
 
   tipoLeadOptions: SelectOption[] = [
