@@ -183,6 +183,67 @@
       </div>
     </section>
 
+    <!-- ── Observaciones ── -->
+    <section>
+      <div class="flex align-items-center gap-2 mb-3">
+        <i class="pi pi-comment" style="color: var(--paz-primary);"></i>
+        <span class="font-bold text-900 text-base uppercase" style="letter-spacing: .05em;">Observaciones</span>
+        <span class="ml-auto" *ngIf="observacionesList.length > 0">
+          <span class="border-round px-2 py-1 text-xs font-bold"
+                style="background: var(--paz-primary-light, #e8f4fd); color: var(--paz-primary);">
+            {{ observacionesList.length }} observación(es)
+          </span>
+        </span>
+      </div>
+
+      <!-- Sin observaciones -->
+      <div *ngIf="observacionesList.length === 0"
+           class="flex align-items-center gap-2 p-4 border-round border-1 border-dashed border-300 text-500 text-sm"
+           style="background: #fafafa;">
+        <i class="pi pi-inbox text-xl text-400"></i>
+        <div class="font-bold text-600 text-sm">No existen observaciones para esta carátula</div>
+      </div>
+
+      <!-- Lista de observaciones -->
+      <div *ngIf="observacionesList.length > 0" class="flex flex-column gap-3">
+        <div *ngFor="let obs of observacionesList"
+             class="border-round border-1 border-200 p-3" style="background: var(--surface-50, #fafafa);">
+
+          <!-- Fila superior: tipo de evento + fecha -->
+          <div class="flex align-items-center justify-content-between gap-2 mb-2 flex-wrap">
+            <span class="border-round px-2 py-1 text-xs font-bold"
+                  [ngStyle]="getTipoEventoStyle(obs.tipoEvento)">
+              {{ obs.tipoEvento || 'Evento' }}
+            </span>
+            <span class="flex align-items-center gap-2 text-500 text-xs">
+              <span class="flex align-items-center gap-1">
+                <i class="pi pi-calendar" style="font-size: 0.7rem;"></i>
+                {{ getFechaMovimiento(obs.fecha).fecha }}
+              </span>
+              <span class="flex align-items-center gap-1" *ngIf="getFechaMovimiento(obs.fecha).hora">
+                <i class="pi pi-clock" style="font-size: 0.7rem;"></i>
+                {{ getFechaMovimiento(obs.fecha).hora }}
+              </span>
+            </span>
+          </div>
+
+          <!-- Descripción de la observación -->
+          <div class="text-900 text-sm" style="white-space: pre-line; line-height: 1.5;">{{ obs.observacion }}</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Glosa / Detalles ── -->
+    <section>
+      <div class="flex align-items-center gap-2 mb-3">
+        <i class="pi pi-align-left" style="color: var(--paz-primary);"></i>
+        <span class="font-bold text-900 text-base uppercase" style="letter-spacing: .05em;">Glosa / Detalles</span>
+      </div>
+      <div class="surface-100 border-round p-3">
+        <div class="text-900 text-sm" style="white-space: pre-line; line-height: 1.5;">{{ caratula.glosa || 'Sin detalle registrado para esta carátula' }}</div>
+      </div>
+    </section>
+
     <!-- ── Documentos Generados ── -->
     <section *ngIf="caratula.documentos && caratula.documentos.length > 0">
       <div class="flex align-items-center gap-2 mb-3">

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { CaratulasResponseDto, Documento } from '../../dto/caratulas-response.dto';
+import { CaratulasResponseDto, Documento, Observacion } from '../../dto/caratulas-response.dto';
 import { ConservadorService } from '../../services/conservador.service';
 
 @Component({
@@ -23,6 +23,28 @@ export class ModalCaratulaComponent {
   close() {
     this.visible = false;
     this.visibleChange.emit(false);
+  }
+
+  /**
+   * Lista de observaciones (rechazos y otros eventos del repertorio) que llega
+   * desde el backend como arreglo relacional. Devuelve [] si no hay.
+   */
+  get observacionesList(): Observacion[] {
+    const obs = this.caratula?.observaciones;
+    return Array.isArray(obs) ? obs : [];
+  }
+
+  /** Estilo del badge segun el tipo de evento de la observacion. */
+  getTipoEventoStyle(tipoEvento: string): { [key: string]: string } {
+    switch ((tipoEvento || '').toLowerCase()) {
+      case 'rechazo':
+        return { 'background-color': '#fecaca', 'color': '#991b1b' };
+      case 'aprobado':
+      case 'aprobacion':
+        return { 'background-color': '#bbf7d0', 'color': '#166534' };
+      default:
+        return { 'background-color': '#e0f2fe', 'color': '#0369a1' };
+    }
   }
 
   getFechaMovimiento(fechaMovimiento: string): { fecha: string; hora: string } {

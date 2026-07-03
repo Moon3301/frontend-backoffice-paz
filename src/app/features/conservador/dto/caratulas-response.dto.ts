@@ -9,11 +9,19 @@ export type CaratulasResponseDto = {
     seccion_codigo: string;
     seccion_nombre: string;
     fecha_estado: string;
+    glosa: string | null;
+    observaciones: Observacion[];
     historiales: CaratulaHistorial[];
     movimientos: CaratulaMovimiento[];
     documentos: Documento[];
     createdAt: Date;
     updatedAt: Date;
+}
+
+export type Observacion = {
+    fecha: string;
+    observacion: string;
+    tipoEvento: string;
 }
 
 export type CaratulaHistorial = {
