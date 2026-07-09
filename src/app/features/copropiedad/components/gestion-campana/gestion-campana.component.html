@@ -1,0 +1,178 @@
+<div class="grid mt-2">
+
+  <!-- ── Columna izquierda: Selección de Proyecto ── -->
+  <div class="col-12 lg:col-4">
+    <div class="surface-card p-4 shadow-2 border-round h-full">
+      <div class="flex align-items-center gap-2 mb-4">
+        <i class="pi pi-building text-paz-primary"></i>
+        <span class="text-lg font-semibold text-paz-primary">Selección de Proyecto</span>
+      </div>
+
+      <div class="flex flex-column gap-3">
+        <!-- Proyecto -->
+        <div>
+          <label class="block text-xs font-bold text-500 uppercase mb-2">Proyecto</label>
+          <p-dropdown
+            [options]="proyectos"
+            [(ngModel)]="selectedProyecto"
+            (onChange)="onProyectoChange()"
+            optionLabel="nombre_proyecto"
+            optionValue="id_proyecto"
+            [filter]="true"
+            filterBy="nombre_proyecto"
+            [loading]="loadingProyectos"
+            placeholder="Seleccione un proyecto..."
+            styleClass="w-full"
+            appendTo="body">
+          </p-dropdown>
+        </div>
+
+        <!-- Nombre del documento -->
+        <div>
+          <label class="block text-xs font-bold text-500 uppercase mb-2">Nombre del Documento (Código Negocio + Nombre Proyecto)</label>
+          <input pInputText type="text" [(ngModel)]="nombreDocumento" placeholder="Ej: 12345 - Edificio Central" class="w-full" />
+        </div>
+
+        <!-- Adjunto PDF -->
+        <div>
+          <label class="block text-xs font-bold text-500 uppercase mb-2">Adjunto (PDF)</label>
+          <p-fileupload
+            name="file"
+            mode="advanced"
+            accept="application/pdf"
+            [maxFileSize]="10485760"
+            [customUpload]="true"
+            (uploadHandler)="onUpload($event)"
+            [auto]="false"
+            chooseLabel="Subir archivo"
+            uploadLabel="Cargar"
+            cancelLabel="Quitar"
+            [disabled]="!selectedProyecto || subiendo">
+            <ng-template pTemplate="empty">
+              <div class="flex flex-column align-items-center justify-content-center py-4 text-500">
+                <i class="pi pi-cloud-upload text-3xl mb-2"></i>
+                <span class="text-sm">Arrastra el PDF aquí o usa "Subir archivo"</span>
+                <span class="text-xs text-400 mt-1">PDF hasta 10MB</span>
+              </div>
+            </ng-template>
+          </p-fileupload>
+        </div>
+
+        <!-- Reglamentos cargados -->
+        <div class="pt-3 border-top-1 surface-border">
+          <div class="flex align-items-center justify-content-between mb-2">
+            <span class="text-xs font-bold text-500 uppercase">Reglamentos cargados</span>
+            <span class="text-xs text-400" *ngIf="reglamentos.length">{{ reglamentos.length }}</span>
+          </div>
+
+          <div *ngIf="loadingReglamentos" class="text-500 text-sm py-2">Cargando…</div>
+
+          <div *ngIf="!loadingReglamentos && reglamentos.length === 0" class="text-400 text-sm py-2">
+            {{ selectedProyecto ? 'Sin reglamentos cargados para este proyecto.' : 'Seleccione un proyecto.' }}
+          </div>
+
+          <div class="flex flex-column gap-2">
+            <div *ngFor="let reg of reglamentos"
+                 class="flex align-items-center gap-2 border-1 surface-border border-round p-2">
+              <i class="pi pi-file-pdf text-red-500"></i>
+              <div class="flex-1 min-w-0">
+                <div class="text-sm font-medium text-900 white-space-nowrap overflow-hidden text-overflow-ellipsis">{{ reg.nombre_documento }}</div>
+                <div class="text-xs text-400">{{ reg.createdAt | date:'dd/MM/yyyy HH:mm' }}</div>
+              </div>
+              <button pButton type="button" icon="pi pi-download"
+                      class="p-button-text p-button-sm"
+                      pTooltip="Descargar" tooltipPosition="top"
+                      [loading]="isDescargando(reg.id)"
+                      (click)="descargar(reg)"></button>
+              <button pButton type="button" icon="pi pi-trash"
+                      class="p-button-text p-button-sm p-button-danger"
+                      pTooltip="Eliminar" tooltipPosition="top"
+                      (click)="eliminarReglamento(reg)"></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Columna derecha: Redactar Correo ── -->
+  <div class="col-12 lg:col-8">
+    <div class="surface-card p-4 shadow-2 border-round h-full flex flex-column">
+      <div class="flex align-items-center justify-content-between mb-4">
+        <div class="flex align-items-center gap-2">
+          <i class="pi pi-pencil text-paz-primary"></i>
+          <span class="text-lg font-semibold text-paz-primary">Redactar Correo</span>
+        </div>
+        <p-tag *ngIf="plantillaGuardada" value="Plantilla Guardada" severity="success" [rounded]="true"></p-tag>
+        <p-tag *ngIf="!plantillaGuardada && (asunto || cuerpoHtml)" value="Borrador" severity="warn" [rounded]="true"></p-tag>
+      </div>
+
+      <div class="flex flex-column gap-4 flex-grow-1">
+        <!-- Asunto -->
+        <div>
+          <label class="block text-xs font-bold text-500 uppercase mb-2">Asunto</label>
+          <input pInputText type="text" [(ngModel)]="asunto" placeholder="Ej: Información importante sobre su propiedad" class="w-full" />
+        </div>
+
+        <!-- Cuerpo (editor enriquecido) -->
+        <div>
+          <label class="block text-xs font-bold text-500 uppercase mb-2">Cuerpo del correo</label>
+          <p-editor [(ngModel)]="cuerpoHtml" [style]="{ height: '300px' }">
+            <ng-template pTemplate="header">
+              <span class="ql-formats">
+                <button type="button" class="ql-bold" aria-label="Negrita"></button>
+                <button type="button" class="ql-italic" aria-label="Cursiva"></button>
+                <button type="button" class="ql-underline" aria-label="Subrayado"></button>
+              </span>
+              <span class="ql-formats">
+                <button type="button" class="ql-list" value="ordered"></button>
+                <button type="button" class="ql-list" value="bullet"></button>
+                <button type="button" class="ql-link"></button>
+              </span>
+            </ng-template>
+          </p-editor>
+          <small class="text-400">Puede usar el marcador <code>&#123;Nombre Propietario&#125;</code> que será reemplazado al enviar.</small>
+        </div>
+      </div>
+
+      <!-- Acciones -->
+      <div class="flex justify-content-end gap-2 pt-4 mt-3 border-top-1 surface-border">
+        <button pButton type="button" label="Enviar prueba" icon="pi pi-send"
+                class="p-button-text"
+                (click)="abrirPrueba()"></button>
+        <button pButton type="button" label="Guardar Borrador" icon="pi pi-save"
+                class="p-button-outlined"
+                [loading]="guardando"
+                (click)="guardarPlantilla(true)"></button>
+        <button pButton type="button" label="Guardar" icon="pi pi-check"
+                class="p-button-primary"
+                [loading]="guardando"
+                (click)="guardarPlantilla(false)"></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Dialog envío de prueba -->
+<p-dialog header="Enviar correo de prueba" [(visible)]="pruebaVisible" [modal]="true" [style]="{ width: '460px' }" [draggable]="false">
+  <div class="flex flex-column gap-3 pt-2">
+    <p class="text-500 text-sm m-0">
+      Se enviará la plantilla actual con el último reglamento del proyecto adjunto.
+    </p>
+    <div>
+      <label class="block text-xs font-bold text-500 uppercase mb-2">Destinatario (cliente)</label>
+      <input pInputText type="email" [(ngModel)]="pruebaDestinatario" placeholder="correo@ejemplo.cl" class="w-full" />
+    </div>
+    <div>
+      <label class="block text-xs font-bold text-500 uppercase mb-2">Copia / Asesor (opcional)</label>
+      <input pInputText type="email" [(ngModel)]="pruebaCc" placeholder="asesor@paz.cl" class="w-full" />
+    </div>
+  </div>
+  <ng-template pTemplate="footer">
+    <button pButton type="button" label="Cancelar" class="p-button-text" (click)="pruebaVisible = false"></button>
+    <button pButton type="button" label="Enviar" icon="pi pi-send"
+            [loading]="enviandoPrueba"
+            [disabled]="!pruebaDestinatario"
+            (click)="enviarPrueba()"></button>
+  </ng-template>
+</p-dialog>

@@ -1,0 +1,69 @@
+<p-dialog
+  [(visible)]="visible"
+  (onHide)="close()"
+  [modal]="true"
+  [draggable]="false"
+  [style]="{ width: '640px', maxWidth: '95vw' }"
+  *ngIf="envio">
+
+  <ng-template pTemplate="header">
+    <div class="flex align-items-center gap-2">
+      <i class="pi pi-envelope text-paz-primary text-xl"></i>
+      <div>
+        <div class="font-bold text-lg text-900">Detalle del envío</div>
+        <div class="text-500 text-sm">{{ envio.nombre_proyecto || 'Proyecto' }}</div>
+      </div>
+    </div>
+  </ng-template>
+
+  <div class="flex flex-column gap-3 pt-2" *ngIf="envio">
+    <div class="flex align-items-center gap-2">
+      <span class="text-xs font-bold text-500 uppercase">Estado:</span>
+      <p-tag [value]="envio.estado" [severity]="getSeverity(envio.estado)" [rounded]="true"></p-tag>
+    </div>
+
+    <div class="grid">
+      <div class="col-12 md:col-6">
+        <div class="surface-100 border-round p-3">
+          <div class="text-xs text-500 uppercase font-bold mb-1">Destinatario</div>
+          <div class="text-900">{{ envio.destinatario || '—' }}</div>
+        </div>
+      </div>
+      <div class="col-12 md:col-6">
+        <div class="surface-100 border-round p-3">
+          <div class="text-xs text-500 uppercase font-bold mb-1">Copia (Asesor)</div>
+          <div class="text-900">{{ envio.cc_asesor || '—' }}</div>
+        </div>
+      </div>
+      <div class="col-12 md:col-6">
+        <div class="surface-100 border-round p-3">
+          <div class="text-xs text-500 uppercase font-bold mb-1">Documento</div>
+          <div class="text-900">{{ envio.nombre_documento || '—' }}</div>
+        </div>
+      </div>
+      <div class="col-12 md:col-6">
+        <div class="surface-100 border-round p-3">
+          <div class="text-xs text-500 uppercase font-bold mb-1">Fecha de envío</div>
+          <div class="text-900">{{ (envio.fecha_envio || envio.createdAt) | date:'dd/MM/yyyy HH:mm' }}</div>
+        </div>
+      </div>
+      <div class="col-12">
+        <div class="surface-100 border-round p-3">
+          <div class="text-xs text-500 uppercase font-bold mb-1">Asunto</div>
+          <div class="text-900">{{ envio.asunto || '—' }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="envio.estado === 'Fallido' && envio.error_mensaje"
+         class="border-round p-3" style="background:#fff1f2; color:#be123c;">
+      <div class="text-xs font-bold uppercase mb-1">Motivo del fallo</div>
+      <div class="text-sm" style="white-space: pre-line;">{{ envio.error_mensaje }}</div>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button pButton type="button" label="Cerrar" icon="pi pi-times"
+            class="p-button-outlined p-button-secondary" (click)="close()"></button>
+  </ng-template>
+</p-dialog>

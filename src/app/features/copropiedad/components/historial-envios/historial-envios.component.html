@@ -1,0 +1,104 @@
+<div class="surface-card p-4 shadow-2 border-round mt-2">
+
+  <!-- Filtros -->
+  <div class="flex flex-column md:flex-row md:align-items-end md:justify-content-between gap-3 mb-4">
+    <div class="flex flex-column md:flex-row gap-3">
+      <div class="w-full md:w-16rem">
+        <label class="block text-xs font-bold text-500 uppercase mb-2">Filtrar por Proyecto</label>
+        <p-dropdown
+          [options]="proyectos"
+          [(ngModel)]="filtroProyecto"
+          optionLabel="nombre_proyecto"
+          optionValue="id_proyecto"
+          [filter]="true"
+          filterBy="nombre_proyecto"
+          [showClear]="true"
+          placeholder="Todos los proyectos"
+          styleClass="w-full"
+          appendTo="body"
+          (onChange)="aplicarFiltros()">
+        </p-dropdown>
+      </div>
+      <div class="w-full md:w-18rem">
+        <label class="block text-xs font-bold text-500 uppercase mb-2">Rango de Fechas</label>
+        <p-datepicker
+          [(ngModel)]="rangoFechas"
+          selectionMode="range"
+          [readonlyInput]="true"
+          dateFormat="dd/mm/yy"
+          placeholder="Seleccionar fechas"
+          styleClass="w-full"
+          appendTo="body"
+          (onSelect)="aplicarFiltros()">
+        </p-datepicker>
+      </div>
+    </div>
+
+    <div class="flex gap-2">
+      <button pButton type="button" label="Limpiar" icon="pi pi-filter-slash"
+              class="p-button-outlined p-button-secondary"
+              (click)="limpiarFiltros()"></button>
+      <button pButton type="button" label="Exportar" icon="pi pi-download"
+              class="p-button-primary"
+              (click)="exportar()"></button>
+    </div>
+  </div>
+
+  <!-- Tabla -->
+  <p-table [value]="envios"
+           [lazy]="true"
+           (onLazyLoad)="cargarLazy($event)"
+           [loading]="isLoading"
+           [paginator]="true"
+           [rows]="rows"
+           [(first)]="first"
+           [totalRecords]="totalRecords"
+           [rowsPerPageOptions]="[10, 25, 50]"
+           styleClass="p-datatable-sm p-datatable-gridlines"
+           responsiveLayout="scroll">
+
+    <ng-template pTemplate="header">
+      <tr>
+        <th class="text-500 text-xs uppercase font-bold">Proyecto</th>
+        <th class="text-500 text-xs uppercase font-bold">Asunto</th>
+        <th class="text-500 text-xs uppercase font-bold">Documento/Nombre</th>
+        <th class="text-500 text-xs uppercase font-bold">Destinatario</th>
+        <th class="text-500 text-xs uppercase font-bold">Estado</th>
+        <th class="text-500 text-xs uppercase font-bold">Fecha</th>
+        <th class="text-500 text-xs uppercase font-bold text-right">Acciones</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-envio>
+      <tr class="border-bottom-1 surface-border">
+        <td class="font-medium text-900">{{ envio.nombre_proyecto || '—' }}</td>
+        <td class="text-600">{{ envio.asunto || '—' }}</td>
+        <td class="text-600">{{ envio.nombre_documento || '—' }}</td>
+        <td class="text-600">{{ envio.destinatario || '—' }}</td>
+        <td>
+          <p-tag [value]="envio.estado" [severity]="getSeverity(envio.estado)" [rounded]="true"></p-tag>
+        </td>
+        <td class="text-600">{{ (envio.fecha_envio || envio.createdAt) | date:'dd/MM/yyyy HH:mm' }}</td>
+        <td class="text-right">
+          <button pButton type="button" icon="pi pi-eye" class="p-button-text p-button-sm"
+                  pTooltip="Ver detalle" tooltipPosition="top" (click)="verDetalle(envio)"></button>
+          <button pButton type="button" icon="pi pi-trash" class="p-button-text p-button-sm p-button-danger"
+                  pTooltip="Eliminar" tooltipPosition="top" (click)="eliminar(envio)"></button>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="7">
+          <div class="flex flex-column align-items-center justify-content-center py-6 gap-2">
+            <i class="pi pi-inbox text-4xl text-300"></i>
+            <div class="text-600 font-medium">Sin envíos registrados</div>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<app-modal-envio [(visible)]="modalVisible" [envio]="selectedEnvio"></app-modal-envio>
