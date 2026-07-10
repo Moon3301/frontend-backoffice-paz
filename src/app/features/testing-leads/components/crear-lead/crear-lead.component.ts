@@ -70,6 +70,7 @@ const TIPOLEAD_POR_ORIGEN1: Record<string, string> = {
   Z13: 'Landing',   // Web Verdece 2
   Z11: 'Landing',   // Web Vista Golf
   Z17: 'WhatsApp',  // Lidz
+  Z15: 'Meta',      // Meta
 };
 
 const TIPOLEAD_DEFAULT = 'Solicitud Información';

@@ -265,6 +265,15 @@
                 </div>
                 <div class="text-400 text-xs">{{ doc.createdAt | date:'dd/MM/yyyy HH:mm' }}</div>
               </div>
+              <button *ngIf="doc.url_publica" pButton pRipple type="button"
+                      [icon]="enlaceCopiadoId === doc.id ? 'pi pi-check' : 'pi pi-copy'"
+                      class="p-button-sm p-button-text p-button-rounded flex-shrink-0"
+                      [style]="enlaceCopiadoId === doc.id
+                        ? { 'color': '#16a34a' }
+                        : { 'color': 'var(--paz-primary)' }"
+                      [title]="enlaceCopiadoId === doc.id ? '¡Enlace copiado!' : 'Copiar enlace'"
+                      (click)="copiarEnlace(doc)">
+              </button>
               <button pButton pRipple type="button"
                       icon="pi pi-download"
                       class="p-button-sm p-button-outlined p-button-rounded flex-shrink-0"

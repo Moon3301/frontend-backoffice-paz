@@ -18,6 +18,9 @@ export class ModalCaratulaComponent {
   descargandoIds: Set<number> = new Set();
   errorDescargaId: number | null = null;
 
+  /** doc.id cuyo enlace se acaba de copiar (para feedback en el botón) */
+  enlaceCopiadoId: number | null = null;
+
   constructor(private conservadorService: ConservadorService) {}
 
   close() {
@@ -71,6 +74,26 @@ export class ModalCaratulaComponent {
 
   isDescargando(docId: number): boolean {
     return this.descargandoIds.has(docId);
+  }
+
+  /** Copia la URL pública firmada del documento al portapapeles. */
+  async copiarEnlace(doc: Documento) {
+    if (!doc.url_publica) return;
+    try {
+      await navigator.clipboard.writeText(doc.url_publica);
+    } catch {
+      // Fallback para navegadores/contextos sin Clipboard API
+      const ta = document.createElement('textarea');
+      ta.value = doc.url_publica;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+    }
+    this.enlaceCopiadoId = doc.id;
+    setTimeout(() => {
+      if (this.enlaceCopiadoId === doc.id) this.enlaceCopiadoId = null;
+    }, 2000);
   }
 
   async descargarDocumento(doc: Documento) {

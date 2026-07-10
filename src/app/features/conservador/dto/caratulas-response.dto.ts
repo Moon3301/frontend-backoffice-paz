@@ -45,6 +45,7 @@ export type Documento = {
     key: string;
     enlace: string;
     ruta_local: string;
+    url_publica: string | null;
     createdAt: Date;
 }
 
