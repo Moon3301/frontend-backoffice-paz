@@ -51,6 +51,29 @@ const PROYECTOS_DATA: ProyectoData[] = [
   { id_proyecto: 'I1521', nombre_proyecto: 'PARQUE ARBOLEDA LO CURRO ET. 2',   cod_comuna: '130132', nombre_comuna: 'Vitacura',         crm: 'Z50', crm_rol: 'Z105' },
 ];
 
+/**
+ * Mapeo Origen 1 (código Z) → Tipolead que acepta el servicio CRM.
+ * Cualquier Origen 1 no listado cae al valor por defecto (TIPOLEAD_DEFAULT),
+ * para que el envío nunca falle por un Tipolead no reconocido.
+ * Ajustar aquí si el negocio redefine el origen de algún lead.
+ */
+const TIPOLEAD_POR_ORIGEN1: Record<string, string> = {
+  Z02: 'PTI',       // Portal Inmobiliario
+  Z03: 'TocToc',    // Toc Toc
+  Z14: 'Enlace',    // Enlace
+  Z06: 'Landing',   // Landing
+  Z07: 'Landing',   // Landing Oficinas
+  Z08: 'Landing',   // Landing Inversionistas
+  Z09: 'Landing',   // Landing High end
+  Z12: 'Landing',   // Web Arboleda
+  Z10: 'Landing',   // Web Verdece
+  Z13: 'Landing',   // Web Verdece 2
+  Z11: 'Landing',   // Web Vista Golf
+  Z17: 'WhatsApp',  // Lidz
+};
+
+const TIPOLEAD_DEFAULT = 'Solicitud Información';
+
 @Component({
   selector: 'app-crear-lead',
   standalone: false,
@@ -146,21 +169,6 @@ export class CrearLeadComponent {
     { label: '6 Dormitorios', value:'6 Dormitorios'},
   ]
 
-  tipoLeadOptions: SelectOption[] = [
-    { label: 'Lidz',                  value: 'Lidz' },
-    { label: 'SVO',                   value: 'SVO' },
-    { label: 'Landing',               value: 'Landing' },
-    { label: 'ASDF',                  value: 'ASDF' },
-    { label: 'PTI',                   value: 'PTI' },
-    { label: 'WhatsApp',              value: 'WhatsApp' },
-    { label: 'Broker',                value: 'Broker' },
-    { label: 'Solicitud Información', value: 'Solicitud Información' },
-    { label: 'Yellow',                value: 'Yellow' },
-    { label: 'Enlace',                value: 'Enlace' },
-    { label: 'Meta',                  value: 'Meta' },
-    { label: 'TocToc',                value: 'TocToc' },
-  ];
-
   generoOptions = [
     { label: 'Sin especificar', value: 3 },
     { label: 'Masculino',       value: 1 },
@@ -183,7 +191,6 @@ export class CrearLeadComponent {
       Origen1:              ['', [Validators.required]],
       Origen2:              ['', [Validators.required]],
       Fuente:               ['', [Validators.required]],
-      Tipolead:             ['Solicitud Información', []],
       Genero:               [null, [Validators.required]],
       FechaLeadExterno_KUT: ['', [Validators.required]],
       Campana:              ['', [Validators.required]],
@@ -194,6 +201,14 @@ export class CrearLeadComponent {
   }
 
   get f() { return this.leadForm.controls; }
+
+  /**
+   * Determina el Tipolead a partir del Origen 1 seleccionado.
+   * Si el origen no está mapeado, usa el valor por defecto.
+   */
+  private resolverTipolead(origen1: string): string {
+    return TIPOLEAD_POR_ORIGEN1[origen1] ?? TIPOLEAD_DEFAULT;
+  }
 
   onRutInput(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -260,7 +275,7 @@ export class CrearLeadComponent {
       Campana:                v.Campana.trim(),
       Fuente:                 v.Fuente.trim(),
       Medio:                  v.Medio.trim(),
-      Tipolead:               v.Tipolead || 'Solicitud Información',
+      Tipolead:               this.resolverTipolead(v.Origen1),
       Dormitorios:            v.Tipologia,
       TituloVisita:           '',
       Salaventa:              '',

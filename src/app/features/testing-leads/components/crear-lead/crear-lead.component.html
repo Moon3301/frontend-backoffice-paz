@@ -182,7 +182,7 @@
                 <i class="pi pi-building text-base"></i>
                 Proyecto y Ubicación
                 <span class="font-normal text-400 text-xs normal-case" style="text-transform: none;">
-                    (al seleccionar proyecto se completan automáticamente la comuna y el Origen 2)
+                    (al seleccionar el proyecto se completan automáticamente la comuna y su código de proyecto CRM)
                 </span>
             </div>
             <div class="grid">
@@ -271,10 +271,10 @@
                     </div>
                 </div>
 
-                <!-- Origen 2 (auto-relleno por proyecto, editable manualmente) -->
+                <!-- Proyecto (Origen 2 en el payload; auto-relleno por proyecto, editable manualmente) -->
                 <div class="col-12 md:col-6 lg:col-3 field mb-3">
                     <label class="block font-medium text-900 text-sm mb-2 font-bold">
-                        Origen 2 <span style="color: var(--paz-accent-red);">*</span>
+                        Proyecto <span style="color: var(--paz-accent-red);">*</span>
                     </label>
                     <p-dropdown formControlName="Origen2"
                                 [options]="origen2Options"
@@ -287,7 +287,7 @@
                     </p-dropdown>
                     <div *ngIf="f['Origen2'].invalid && f['Origen2'].touched" class="mt-1">
                         <small class="text-red-500 text-xs">
-                            <i class="pi pi-exclamation-circle mr-1"></i>El origen 2 es obligatorio.
+                            <i class="pi pi-exclamation-circle mr-1"></i>El proyecto es obligatorio.
                         </small>
                     </div>
                 </div>
@@ -315,35 +315,6 @@
                     </div>
                 </div>
 
-                <!-- Tipo Lead
-                <div class="col-12 md:col-6 lg:col-3 field mb-3">
-                    <label class="block font-medium text-900 text-sm mb-2 font-bold">
-                        Tipo de Lead <span style="color: var(--paz-accent-red);">*</span>
-                    </label>
-                    <p-dropdown formControlName="Tipolead"
-                                [options]="tipoLeadOptions"
-                                optionLabel="label"
-                                optionValue="value"
-                                placeholder="Seleccionar tipo"
-                                styleClass="w-full"
-                                [showClear]="true"
-                                [ngClass]="{'ng-invalid ng-dirty': f['Tipolead'].invalid && f['Tipolead'].touched}">
-                        <ng-template pTemplate="empty">
-                            <div class="text-500 text-sm p-2 text-center">
-                                <i class="pi pi-info-circle mr-1"></i>
-                                Tipos pendientes de configuración
-                            </div>
-                        </ng-template>
-                    </p-dropdown>
-                    <div *ngIf="f['Tipolead'].invalid && f['Tipolead'].touched" class="mt-1">
-                        <small class="text-red-500 text-xs">
-                            <i class="pi pi-exclamation-circle mr-1"></i>El tipo de lead es obligatorio.
-                        </small>
-                    </div>
-                </div> -->
-
-                
-                
             </div>
         </div>
 
