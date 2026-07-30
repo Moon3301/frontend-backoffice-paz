@@ -19,6 +19,8 @@ export class GestionCampanaComponent implements OnInit {
   asunto: string = '';
   cuerpoHtml: string = '';
   plantillaGuardada: boolean = false;
+  /** Fecha del último guardado de la plantilla (para mostrar en pantalla). */
+  plantillaActualizada: Date | null = null;
 
   loadingProyectos = false;
   loadingReglamentos = false;
@@ -54,6 +56,7 @@ export class GestionCampanaComponent implements OnInit {
     this.asunto = '';
     this.cuerpoHtml = '';
     this.plantillaGuardada = false;
+    this.plantillaActualizada = null;
     if (!this.selectedProyecto) return;
 
     this.loadingReglamentos = true;
@@ -67,6 +70,7 @@ export class GestionCampanaComponent implements OnInit {
         this.asunto = plantilla.asunto ?? '';
         this.cuerpoHtml = plantilla.cuerpo_html ?? '';
         this.plantillaGuardada = !plantilla.es_borrador;
+        this.plantillaActualizada = plantilla.updatedAt ? new Date(plantilla.updatedAt) : null;
       }
     } catch {
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo cargar la información del proyecto.' });
@@ -141,12 +145,13 @@ export class GestionCampanaComponent implements OnInit {
     }
     this.guardando = true;
     try {
-      await this.copropiedadService.guardarPlantilla(this.selectedProyecto, {
+      const plantilla = await this.copropiedadService.guardarPlantilla(this.selectedProyecto, {
         asunto: this.asunto,
         cuerpo_html: this.cuerpoHtml,
         es_borrador: esBorrador,
       });
       this.plantillaGuardada = !esBorrador;
+      this.plantillaActualizada = plantilla?.updatedAt ? new Date(plantilla.updatedAt) : new Date();
       this.messageService.add({
         severity: 'success',
         summary: esBorrador ? 'Borrador guardado' : 'Guardado',
@@ -164,15 +169,31 @@ export class GestionCampanaComponent implements OnInit {
       this.messageService.add({ severity: 'warn', summary: 'Falta proyecto', detail: 'Seleccione un proyecto.' });
       return;
     }
+    if (!this.asunto?.trim() || !this.textoPlano(this.cuerpoHtml)) {
+      this.messageService.add({ severity: 'warn', summary: 'Falta contenido', detail: 'Escribe el asunto y el cuerpo del correo antes de enviar la prueba.' });
+      return;
+    }
     this.pruebaDestinatario = '';
     this.pruebaCc = '';
     this.pruebaVisible = true;
+  }
+
+  /** Quita etiquetas HTML para saber si el cuerpo tiene texto real (Quill deja <p><br></p>). */
+  private textoPlano(html: string): string {
+    return (html ?? '').replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
   }
 
   async enviarPrueba(): Promise<void> {
     if (!this.selectedProyecto || !this.pruebaDestinatario.trim()) return;
     this.enviandoPrueba = true;
     try {
+      // Guarda la plantilla actual para que la prueba use lo que está en pantalla
+      await this.copropiedadService.guardarPlantilla(this.selectedProyecto, {
+        asunto: this.asunto,
+        cuerpo_html: this.cuerpoHtml,
+        es_borrador: !this.plantillaGuardada,
+      });
+
       const envio = await this.copropiedadService.enviarPrueba({
         id_proyecto: this.selectedProyecto,
         destinatario: this.pruebaDestinatario.trim(),

@@ -103,8 +103,13 @@
           <i class="pi pi-pencil text-paz-primary"></i>
           <span class="text-lg font-semibold text-paz-primary">Redactar Correo</span>
         </div>
-        <p-tag *ngIf="plantillaGuardada" value="Plantilla Guardada" severity="success" [rounded]="true"></p-tag>
-        <p-tag *ngIf="!plantillaGuardada && (asunto || cuerpoHtml)" value="Borrador" severity="warn" [rounded]="true"></p-tag>
+        <div class="flex align-items-center gap-2">
+          <span class="text-500 text-xs" *ngIf="plantillaActualizada">
+            Guardado {{ plantillaActualizada | date:'dd/MM/yyyy HH:mm' }}
+          </span>
+          <p-tag *ngIf="plantillaGuardada" value="Plantilla Guardada" severity="success" [rounded]="true"></p-tag>
+          <p-tag *ngIf="!plantillaGuardada && (asunto || cuerpoHtml)" value="Borrador" severity="warn" [rounded]="true"></p-tag>
+        </div>
       </div>
 
       <div class="flex flex-column gap-4 flex-grow-1">
