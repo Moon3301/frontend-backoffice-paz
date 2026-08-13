@@ -46,7 +46,24 @@ export interface BatchResponse {
     total: number;
     exitosos: number;
     fallidos: number;
+    pendientes?: number;
+    rateLimit?: boolean;
+    retryAfterSeg?: number | null;
+    cuota?: EstadoCuota;
     resultados: BatchResultItem[];
+}
+
+/** Cuota diaria de la API del Conservador. */
+export interface EstadoCuota {
+    fecha: string;
+    limiteDia: number;
+    usadas: number;
+    disponibles: number;
+    reservaCron: number;
+    disponiblesUsuario: number;
+    maxCaratulasPorRequest: number;
+    /** Carátulas que aún se pueden cargar hoy. */
+    caratulasDisponiblesUsuario: number;
 }
 
 @Injectable({
@@ -81,6 +98,11 @@ export class ConservadorService {
             this.http.post<CaratulasResponseDto>(`${API_URL}/caratulas/cargar`, payload)
         );
         return response;
+    }
+
+    /** Cuota disponible hoy para consultar el Conservador. */
+    async getCuota(): Promise<EstadoCuota> {
+        return firstValueFrom(this.http.get<EstadoCuota>(`${API_URL}/caratulas/cuota`));
     }
 
     async consultarCaratulasBatch(payload: PayloadBatchItem[]): Promise<BatchResponse> {

@@ -1,6 +1,6 @@
-import { Component, EventEmitter, Output, ViewChild, ElementRef } from '@angular/core';
+import { Component, EventEmitter, Output, ViewChild, ElementRef, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
-import { ConservadorService, PayloadBatchItem, BatchResponse, BatchResultItem } from '../../services/conservador.service';
+import { ConservadorService, PayloadBatchItem, BatchResponse, BatchResultItem, EstadoCuota } from '../../services/conservador.service';
 import { CaratulasResponseDto } from '../../dto/caratulas-response.dto';
 import * as XLSX from 'xlsx';
 
@@ -18,10 +18,13 @@ function soloNumerosValidator(control: AbstractControl): ValidationErrors | null
   templateUrl: './carga-caratula.component.html',
   styleUrl: './carga-caratula.component.css'
 })
-export class CargaCaratulaComponent {
+export class CargaCaratulaComponent implements OnInit {
 
   /** Emits the newly created/updated caratula so the parent can refresh the list */
   @Output() cargaExitosa = new EventEmitter<CaratulasResponseDto>();
+
+  /** Cuota diaria de la API del Conservador (para avisar antes de cargar). */
+  cuota: EstadoCuota | null = null;
 
   @ViewChild('fileInputBatch') fileInputBatch!: ElementRef<HTMLInputElement>;
 
@@ -42,6 +45,19 @@ export class CargaCaratulaComponent {
       numeroCaratula: ['', [Validators.required, soloNumerosValidator]],
       rut: ['', [Validators.required, Validators.minLength(9)]]
     });
+  }
+
+  async ngOnInit(): Promise<void> {
+    await this.cargarCuota();
+  }
+
+  /** Refresca el estado de la cuota diaria. */
+  async cargarCuota(): Promise<void> {
+    try {
+      this.cuota = await this.conservadorService.getCuota();
+    } catch {
+      this.cuota = null; // si falla, no bloqueamos la carga
+    }
   }
 
   get f() { return this.cargaForm.controls; }
@@ -68,6 +84,7 @@ export class CargaCaratulaComponent {
       this.errorCarga = err?.error?.message ?? 'Ocurrió un error al procesar la carátula. Intenta nuevamente.';
     } finally {
       this.isLoading = false;
+      await this.cargarCuota();
     }
   }
 
@@ -125,6 +142,17 @@ export class CargaCaratulaComponent {
           return;
         }
 
+        // Validar la cuota diaria del Conservador antes de empezar, para no
+        // fallar a mitad de la carga.
+        await this.cargarCuota();
+        const disponibles = this.cuota?.caratulasDisponiblesUsuario;
+        if (disponibles != null && payload.length > disponibles) {
+          this.errorBatch = disponibles === 0
+            ? 'Se alcanzó el límite diario de consultas al Conservador. Intenta nuevamente mañana.'
+            : `El archivo tiene ${payload.length} carátulas y hoy solo puedes procesar ${disponibles}. Reduce el archivo o continúa mañana.`;
+          return;
+        }
+
         await this.procesarBatch(payload);
       } catch (err: any) {
         this.errorBatch = 'Error al leer el archivo Excel. Asegúrate de que sea un archivo .xlsx o .xls válido.';
@@ -148,6 +176,7 @@ export class CargaCaratulaComponent {
       this.errorBatch = err?.error?.message ?? 'Ocurrió un error al procesar el lote. Intenta nuevamente.';
     } finally {
       this.isBatchLoading = false;
+      await this.cargarCuota();
     }
   }
 

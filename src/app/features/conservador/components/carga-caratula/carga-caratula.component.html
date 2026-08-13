@@ -23,6 +23,27 @@
         </div>
     </div>
 
+    <!-- ───── Cuota diaria del Conservador ───── -->
+    <div *ngIf="cuota" class="flex align-items-center gap-2 mt-3 border-round px-3 py-2"
+         [ngStyle]="cuota.caratulasDisponiblesUsuario === 0
+                      ? { 'background': '#fff1f2', 'border': '1px solid #fecdd3' }
+                      : (cuota.caratulasDisponiblesUsuario <= 50
+                          ? { 'background': '#fffbeb', 'border': '1px solid #fde68a' }
+                          : { 'background': '#f8fafc', 'border': '1px solid #e2e8f0' })">
+        <i class="pi"
+           [ngClass]="cuota.caratulasDisponiblesUsuario === 0 ? 'pi-ban' : (cuota.caratulasDisponiblesUsuario <= 50 ? 'pi-exclamation-triangle' : 'pi-info-circle')"
+           [ngStyle]="{ 'color': cuota.caratulasDisponiblesUsuario === 0 ? '#be123c' : (cuota.caratulasDisponiblesUsuario <= 50 ? '#b45309' : '#64748b') }"></i>
+        <span class="text-sm text-600">
+            <ng-container *ngIf="cuota.caratulasDisponiblesUsuario > 0; else sinCuota">
+                Hoy puedes cargar hasta <span class="font-bold text-900">{{ cuota.caratulasDisponiblesUsuario }}</span> carátula(s) más.
+            </ng-container>
+            <ng-template #sinCuota>
+                Se alcanzó el <span class="font-bold">límite diario</span> de consultas al Conservador. Podrás cargar nuevamente mañana.
+            </ng-template>
+            <span class="text-400 ml-2">({{ cuota.usadas }}/{{ cuota.limiteDia }} peticiones usadas)</span>
+        </span>
+    </div>
+
     <!-- ───── Feedback carga individual ───── -->
 
     <!-- Success feedback -->
