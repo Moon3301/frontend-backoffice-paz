@@ -1,15 +1,24 @@
 import { Component, EventEmitter, Output, ViewChild, ElementRef, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ConservadorService, PayloadBatchItem, BatchResponse, BatchResultItem, EstadoCuota } from '../../services/conservador.service';
 import { CaratulasResponseDto } from '../../dto/caratulas-response.dto';
+import {
+  CARATULA_MAX_DIGITOS,
+  motivoCaratulaInvalida,
+  motivoRutInvalido,
+  normalizarRut,
+  numeroCaratulaValidator,
+  rutValidator,
+} from '../../validators/caratula.validators';
 import * as XLSX from 'xlsx';
 
-function soloNumerosValidator(control: AbstractControl): ValidationErrors | null {
-  const val = control.value?.toString().trim();
-  if (val && isNaN(Number(val))) {
-    return { soloNumeros: true };
-  }
-  return null;
+/** Fila del Excel que no pasó la validación. */
+export interface FilaInvalida {
+  /** Número de fila tal como se ve en Excel (la 1 es el encabezado). */
+  fila: number;
+  caratula: string;
+  rut: string;
+  motivos: string[];
 }
 
 @Component({
@@ -39,11 +48,15 @@ export class CargaCaratulaComponent implements OnInit {
   errorBatch: string | null = null;
   archivoNombre: string | null = null;
   mostrarDetalleBatch = false;
+  /** Filas del Excel rechazadas por validación (el archivo no se procesa). */
+  filasInvalidas: FilaInvalida[] = [];
+
+  readonly caratulaMaxDigitos = CARATULA_MAX_DIGITOS;
 
   constructor(private fb: FormBuilder, private conservadorService: ConservadorService) {
     this.cargaForm = this.fb.group({
-      numeroCaratula: ['', [Validators.required, soloNumerosValidator]],
-      rut: ['', [Validators.required, Validators.minLength(9)]]
+      numeroCaratula: ['', [Validators.required, numeroCaratulaValidator]],
+      rut: ['', [Validators.required, rutValidator]]
     });
   }
 
@@ -62,6 +75,34 @@ export class CargaCaratulaComponent implements OnInit {
 
   get f() { return this.cargaForm.controls; }
 
+  /** Impide escribir o pegar cualquier cosa que no sea un dígito. */
+  onCaratulaInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const soloDigitos = input.value.replace(/\D/g, '').slice(0, CARATULA_MAX_DIGITOS);
+    if (soloDigitos !== input.value) {
+      input.value = soloDigitos;
+      this.f['numeroCaratula'].setValue(soloDigitos);
+    }
+  }
+
+  /** Solo admite dígitos, K, puntos y guion mientras se escribe. */
+  onRutInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const permitido = input.value.toUpperCase().replace(/[^0-9K.\-]/g, '').slice(0, 12);
+    if (permitido !== input.value) {
+      input.value = permitido;
+      this.f['rut'].setValue(permitido);
+    }
+  }
+
+  /** Al salir del campo deja el RUT en el formato de la base: 12345678-9. */
+  onRutBlur(): void {
+    const normalizado = normalizarRut(this.f['rut'].value);
+    if (normalizado && normalizado !== this.f['rut'].value) {
+      this.f['rut'].setValue(normalizado);
+    }
+  }
+
   async onGenerate() {
     this.cargaForm.markAllAsTouched();
     if (this.cargaForm.invalid) return;
@@ -75,17 +116,27 @@ export class CargaCaratulaComponent implements OnInit {
     try {
       const result = await this.conservadorService.consultarCaratula({
         caratula: Number(numeroCaratula),
-        rut: rut.trim()
+        rut: normalizarRut(rut)!,
       });
       this.resultadoCarga = result;
       this.cargaExitosa.emit(result);
       this.cargaForm.reset({ numeroCaratula: '', rut: '' });
     } catch (err: any) {
-      this.errorCarga = err?.error?.message ?? 'Ocurrió un error al procesar la carátula. Intenta nuevamente.';
+      this.errorCarga = this.mensajeError(err, 'Ocurrió un error al procesar la carátula. Intenta nuevamente.');
     } finally {
       this.isLoading = false;
       await this.cargarCuota();
     }
+  }
+
+  /**
+   * El backend responde las validaciones como arreglo de mensajes
+   * (ej. ["[3] El dígito verificador del RUT no es correcto."]).
+   */
+  private mensajeError(err: any, porDefecto: string): string {
+    const mensaje = err?.error?.message;
+    if (Array.isArray(mensaje)) return mensaje.join(' · ');
+    return mensaje ?? porDefecto;
   }
 
   dismissResult() {
@@ -109,6 +160,7 @@ export class CargaCaratulaComponent implements OnInit {
     this.batchResult = null;
     this.errorBatch = null;
     this.mostrarDetalleBatch = false;
+    this.filasInvalidas = [];
 
     const reader = new FileReader();
     reader.onload = async (e) => {
@@ -121,24 +173,43 @@ export class CargaCaratulaComponent implements OnInit {
         // Leer como array de arrays para mayor control
         const rows: any[][] = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
-        // Saltar la fila de encabezados (primera fila)
+        // Saltar la fila de encabezados (primera fila).
+        // Columna A = RUT (índice 0), Columna B = número de carátula (índice 1).
         const payload: PayloadBatchItem[] = [];
+        const invalidas: FilaInvalida[] = [];
+
         for (let i = 1; i < rows.length; i++) {
-          const row = rows[i];
-          // Columna A = numero de caratula (índice 0), Columna B = rut (índice 1)
-          const rutRaw = row[0]?.toString().trim();
-          const caratulaRaw = row[1]?.toString().trim();
+          const row = rows[i] ?? [];
+          const rutRaw = (row[0] ?? '').toString().trim();
+          const caratulaRaw = (row[1] ?? '').toString().trim();
 
-          if (!rutRaw || !caratulaRaw) continue;
+          // Filas completamente vacías (típicas al final del Excel) se ignoran.
+          if (!rutRaw && !caratulaRaw) continue;
 
-          const caratulaNum = Number(caratulaRaw);
-          if (isNaN(caratulaNum)) continue;
+          // Cualquier otra fila se valida con las mismas reglas del formulario.
+          // Antes las filas con datos inválidos se descartaban en silencio.
+          const motivos = [motivoCaratulaInvalida(caratulaRaw), motivoRutInvalido(rutRaw)]
+            .filter((m): m is string => m !== null);
 
-          payload.push({ caratula: caratulaNum, rut: rutRaw });
+          if (motivos.length > 0) {
+            invalidas.push({ fila: i + 1, caratula: caratulaRaw, rut: rutRaw, motivos });
+            continue;
+          }
+
+          payload.push({ caratula: Number(caratulaRaw), rut: normalizarRut(rutRaw)! });
+        }
+
+        // Si hay filas inválidas no se procesa nada: se corrige el Excel y se
+        // vuelve a subir. Así no quedan cargas parciales ni se consume cuota
+        // del Conservador con un archivo que igual hay que repetir.
+        if (invalidas.length > 0) {
+          this.filasInvalidas = invalidas;
+          this.errorBatch = `El archivo tiene ${invalidas.length} fila(s) con datos inválidos. Corrígelas y vuelve a subirlo; no se procesó ninguna carátula.`;
+          return;
         }
 
         if (payload.length === 0) {
-          this.errorBatch = 'El archivo no contiene filas válidas. Verifica que las columnas sean: número de carátula (A) y RUT (B).';
+          this.errorBatch = 'El archivo no contiene filas con datos. Verifica que las columnas sean: RUT (A) y número de carátula (B).';
           return;
         }
 
@@ -173,7 +244,7 @@ export class CargaCaratulaComponent implements OnInit {
         this.cargaExitosa.emit(undefined as any);
       }
     } catch (err: any) {
-      this.errorBatch = err?.error?.message ?? 'Ocurrió un error al procesar el lote. Intenta nuevamente.';
+      this.errorBatch = this.mensajeError(err, 'Ocurrió un error al procesar el lote. Intenta nuevamente.');
     } finally {
       this.isBatchLoading = false;
       await this.cargarCuota();
@@ -185,6 +256,7 @@ export class CargaCaratulaComponent implements OnInit {
     this.errorBatch = null;
     this.archivoNombre = null;
     this.mostrarDetalleBatch = false;
+    this.filasInvalidas = [];
   }
 
   toggleDetalleBatch() {
