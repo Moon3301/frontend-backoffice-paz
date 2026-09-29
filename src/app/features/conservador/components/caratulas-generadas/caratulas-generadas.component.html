@@ -1,7 +1,35 @@
 <div class="surface-card p-5 shadow-2 border-round w-full">
-    <div class="mb-4">
-        <div class="text-xl font-bold text-paz-primary mb-2 uppercase">CARÁTULAS GENERADAS</div>
-        <p class="text-500 text-sm m-0">Gestión y descarga de documentos generados.</p>
+    <div class="flex align-items-start justify-content-between flex-wrap gap-3 mb-4">
+        <div>
+            <div class="text-xl font-bold text-paz-primary mb-2 uppercase">CARÁTULAS GENERADAS</div>
+            <p class="text-500 text-sm m-0">Gestión y descarga de documentos generados.</p>
+        </div>
+
+        <!-- ───── Actualización manual de estados (en segundo plano) ───── -->
+        <div class="flex flex-column align-items-end gap-2">
+            <button pButton pRipple type="button"
+                    [label]="actualizando ? 'Actualizando…' : 'Actualizar estados'"
+                    icon="pi pi-refresh"
+                    class="p-button-outlined p-button-sm"
+                    [loading]="actualizando"
+                    [disabled]="actualizando"
+                    (click)="actualizarEstados()"
+                    pTooltip="Consulta al Conservador el estado de todas las carátulas pendientes. Se ejecuta en segundo plano y te avisaremos al terminar."
+                    tooltipPosition="left">
+            </button>
+
+            <small *ngIf="ultimaActualizacion?.enCurso" class="text-500 text-xs flex align-items-center gap-1">
+                <i class="pi pi-spin pi-spinner" style="font-size: .75rem;"></i>
+                {{ ultimaActualizacion?.origen === 'usuario' ? 'Actualización en curso' : 'Actualización automática en curso' }} · puedes seguir trabajando
+            </small>
+
+            <small *ngIf="ultimaActualizacion && !ultimaActualizacion.enCurso" class="text-500 text-xs text-right">
+                Última actualización:
+                <span class="font-semibold text-700">{{ (ultimaActualizacion.fin ?? ultimaActualizacion.inicio) | date:'dd/MM/yyyy HH:mm' }}</span>
+                · {{ etiquetaOrigen(ultimaActualizacion) }}
+                <span *ngIf="ultimaActualizacion.estado !== 'ok'" style="color: #b45309;">· {{ etiquetaEstado(ultimaActualizacion.estado) }}</span>
+            </small>
+        </div>
     </div>
 
     <form [formGroup]="searchForm" (ngSubmit)="onSearch()" class="mb-5">

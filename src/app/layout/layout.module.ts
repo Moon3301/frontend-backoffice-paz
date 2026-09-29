@@ -12,6 +12,7 @@ import { SidebarModule } from 'primeng/sidebar';
 import { ButtonModule } from 'primeng/button';
 import { ToolbarModule } from 'primeng/toolbar';
 import { TooltipModule } from 'primeng/tooltip';
+import { ToastModule } from 'primeng/toast';
 import { RouterModule } from '@angular/router';
 
 @NgModule({
@@ -28,6 +29,7 @@ import { RouterModule } from '@angular/router';
     ButtonModule,
     ToolbarModule,
     TooltipModule,
+    ToastModule,
     RouterModule,
     SharedModule
   ]

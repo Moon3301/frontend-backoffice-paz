@@ -1,7 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subscription, combineLatest } from 'rxjs';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ConservadorService, CaratulasFilter } from '../../services/conservador.service';
 import { CaratulasResponseDto } from '../../dto/caratulas-response.dto';
+import {
+  ActualizacionCaratulasService,
+  EjecucionActualizacion,
+} from '../../../../core/services/actualizacion-caratulas.service';
 
 @Component({
   selector: 'app-caratulas-generadas',
@@ -9,7 +14,7 @@ import { CaratulasResponseDto } from '../../dto/caratulas-response.dto';
   templateUrl: './caratulas-generadas.component.html',
   styleUrl: './caratulas-generadas.component.css'
 })
-export class CaratulasGeneradasComponent implements OnInit {
+export class CaratulasGeneradasComponent implements OnInit, OnDestroy {
 
   searchForm: FormGroup;
   caratulas: CaratulasResponseDto[] = [];
@@ -28,7 +33,16 @@ export class CaratulasGeneradasComponent implements OnInit {
   // Stores the active filter so lazy load can reuse it across page changes
   currentFilter: CaratulasFilter = {};
 
-  constructor(private fb: FormBuilder, private conservadorService: ConservadorService) {
+  // Actualización manual de estados (corre en segundo plano en el backend)
+  ultimaActualizacion: EjecucionActualizacion | null = null;
+  actualizando = false;
+  private subs = new Subscription();
+
+  constructor(
+    private fb: FormBuilder,
+    private conservadorService: ConservadorService,
+    private actualizacionService: ActualizacionCaratulasService,
+  ) {
     this.searchForm = this.fb.group({
       numeroCaratula: [''],
       rut: ['']
@@ -38,6 +52,40 @@ export class CaratulasGeneradasComponent implements OnInit {
   ngOnInit(): void {
     // Trigger initial load via the table's onLazyLoad event (first emission)
     this.fetchCaratulas({ page: 1, limit: this.rows });
+
+    this.subs.add(
+      combineLatest([this.actualizacionService.estado$, this.actualizacionService.iniciando$])
+        .subscribe(([estado, iniciando]) => {
+          this.ultimaActualizacion = estado;
+          this.actualizando = iniciando || !!estado?.enCurso;
+        }),
+    );
+    // Al terminar una corrida se refresca el listado manteniendo filtro y página.
+    this.subs.add(
+      this.actualizacionService.finalizada$.subscribe(() => this.fetchCaratulas(this.currentFilter)),
+    );
+    this.actualizacionService.cargarUltima();
+  }
+
+  ngOnDestroy(): void {
+    this.subs.unsubscribe();
+  }
+
+  actualizarEstados(): void {
+    this.actualizacionService.iniciar();
+  }
+
+  etiquetaOrigen(e: EjecucionActualizacion): string {
+    return e.origen === 'usuario' ? 'manual' : 'automática';
+  }
+
+  etiquetaEstado(estado: string): string {
+    switch (estado) {
+      case 'rate_limit':   return 'parcial (límite de consultas)';
+      case 'interrumpida': return 'interrumpida';
+      case 'error':        return 'con errores';
+      default:             return estado;
+    }
   }
 
   async fetchCaratulas(filter: CaratulasFilter) {

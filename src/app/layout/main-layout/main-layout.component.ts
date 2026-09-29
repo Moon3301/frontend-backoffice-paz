@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ActualizacionCaratulasService } from '../../core/services/actualizacion-caratulas.service';
 
 @Component({
   selector: 'app-main-layout',
@@ -8,4 +9,8 @@ import { Component } from '@angular/core';
 })
 export class MainLayoutComponent {
 
+  // Se inyecta aquí para que el servicio exista en toda la sesión: así retoma
+  // el seguimiento de una actualización de carátulas si el usuario recarga la
+  // página estando en cualquier módulo, y la notificación llega igual.
+  constructor(_actualizacion: ActualizacionCaratulasService) {}
 }
