@@ -16,6 +16,7 @@ import { TagModule } from 'primeng/tag';
 import { DialogModule } from 'primeng/dialog';
 import { TooltipModule } from 'primeng/tooltip';
 import { PrimengModule } from '../../primeng/primeng.module';
+import { SharedModule } from '../../shared/shared.module';
 import { ModalCaratulaComponent } from './components/modal-caratula/modal-caratula.component';
 
 @NgModule({
@@ -27,6 +28,7 @@ import { ModalCaratulaComponent } from './components/modal-caratula/modal-caratu
   ],
   imports: [
     CommonModule,
+    SharedModule,
     ConservadorRoutingModule,
     FormsModule,
     ReactiveFormsModule,

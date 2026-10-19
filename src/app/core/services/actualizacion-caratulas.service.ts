@@ -177,11 +177,12 @@ export class ActualizacionCaratulasService implements OnDestroy {
       this.finalizadaSubject.next(ejecucion);
     } catch (err) {
       const e = err as HttpErrorResponse;
-      // 401: sesión vencida (el interceptor ya redirige al login). 404: la corrida
-      // ya no existe. En ambos casos no tiene sentido seguir preguntando.
-      if (e.status === 401 || e.status === 404 || ++this.fallos >= MAX_FALLOS) {
+      // 401: sesión vencida (el interceptor ya redirige al login). 403: el
+      // usuario ya no tiene el módulo Conservador. 404: la corrida ya no existe.
+      // En esos casos no tiene sentido seguir preguntando.
+      if (e.status === 401 || e.status === 403 || e.status === 404 || ++this.fallos >= MAX_FALLOS) {
         this.detener();
-        if (e.status === 404) this.limpiarIdPendiente();
+        if (e.status === 403 || e.status === 404) this.limpiarIdPendiente();
         return;
       }
       this.programar();

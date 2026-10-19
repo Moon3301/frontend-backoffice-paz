@@ -1,0 +1,32 @@
+.paz-header {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, .06), 0 2px 8px rgba(0, 0, 0, .15);
+}
+.paz-header-logo {
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  background: var(--paz-brand);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.paz-header-logo img { width: 32px; }
+.paz-header-usuario {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  padding: .25rem .75rem .25rem .25rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .08);
+  color: #fff;
+}
+/* Contraste fijo sobre el header oscuro, en ambos temas */
+.paz-header-avatar { background: #fff; color: #0f172a; width: 32px; height: 32px; font-size: .75rem; }

@@ -67,7 +67,7 @@ html.dark-theme {
     /* Text */
     --paz-text-primary:   #fafafa; /* Zinc 50 - Almost white text */
     --paz-text-secondary: #a1a1aa; /* Zinc 400 - Readable secondary */
-    --paz-text-muted:     #52525b; /* Zinc 600 - Muted info */
+    --paz-text-muted:     #8a8a93; /* Antes #52525b: ~2,5:1 sobre las tarjetas, ilegible. Ahora ~5:1 (WCAG AA) */
 
     /* Sidebar / Header */
     --paz-sidebar-bg:     #09090b; /* Merges into page background */
@@ -194,12 +194,12 @@ html:root.dark-theme {
     --p-inputtext-color:             #fafafa;
     --p-inputtext-background:        #18181b;
     --p-inputtext-border-color:      #27272a;
-    --p-inputtext-placeholder-color: #52525b;
+    --p-inputtext-placeholder-color: #71717a;
 
     --p-select-color:                       #fafafa;
     --p-select-background:                  #18181b;
     --p-select-border-color:                #27272a;
-    --p-select-placeholder-color:           #52525b;
+    --p-select-placeholder-color:           #71717a;
     --p-select-dropdown-color:              #a1a1aa;
 
     --p-select-overlay-background:          #18181b;
@@ -227,14 +227,14 @@ html.dark-theme .p-inputtext {
     border-color:     #27272a !important;
     color:            #fafafa !important;
 }
-html.dark-theme .p-inputtext::placeholder { color: #52525b !important; }
+html.dark-theme .p-inputtext::placeholder { color: #71717a !important; }
 
 html.dark-theme .p-select {
     background-color: #18181b !important;
     border-color:     #27272a !important;
 }
 html.dark-theme .p-select .p-select-label          { color: #fafafa !important; }
-html.dark-theme .p-select .p-select-label.p-placeholder { color: #52525b !important; }
+html.dark-theme .p-select .p-select-label.p-placeholder { color: #71717a !important; }
 html.dark-theme .p-select .p-select-dropdown        { color: #a1a1aa !important; }
 
 html.dark-theme .p-select-overlay {
@@ -257,7 +257,7 @@ html.dark-theme textarea.p-inputtext {
     border-color:     #27272a !important;
     color:            #fafafa !important;
 }
-html.dark-theme textarea.p-inputtext::placeholder   { color: #52525b !important; }
+html.dark-theme textarea.p-inputtext::placeholder   { color: #71717a !important; }
 
 html.dark-theme input[type="datetime-local"].p-inputtext,
 html.dark-theme input[type="date"].p-inputtext,
@@ -346,3 +346,213 @@ html, body {
     padding: 0;
     font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
+
+/* ════════════════════════════════════════════════════════════════
+   Sistema visual del backoffice (encabezados, paneles, estados,
+   navegación, login). Usa los tokens --paz-* de arriba, por lo que
+   funciona igual en modo claro y oscuro.
+   ════════════════════════════════════════════════════════════════ */
+
+:root {
+    --paz-brand:          #b91c1c;   /* rojo del logo PAZ */
+    --paz-brand-soft:     #fee2e2;
+    --paz-radius:         12px;
+    --paz-badge-info-bg:   #e0f2fe;
+    --paz-badge-info-text: #075985;
+    --paz-badge-muted-bg:   #f1f5f9;
+    --paz-badge-muted-text: #475569;
+    --paz-shadow-sm: 0 1px 2px rgba(15, 23, 42, .06), 0 1px 3px rgba(15, 23, 42, .08);
+}
+html.dark-theme {
+    --paz-brand-soft:      #450a0a;
+    --paz-badge-info-bg:   #082f49;
+    --paz-badge-info-text: #7dd3fc;
+    --paz-badge-muted-bg:   #27272a;
+    --paz-badge-muted-text: #a1a1aa;
+    --paz-shadow-sm: 0 1px 2px rgba(0, 0, 0, .4);
+}
+
+/* ── Encabezado de página (app-page-header) ── */
+.paz-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+.paz-page-header-icon {
+    width: 44px; height: 44px;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 10px;
+    background: var(--paz-primary);
+    color: var(--paz-primary-text);
+    font-size: 1.15rem;
+    box-shadow: var(--paz-shadow-sm);
+}
+.paz-breadcrumb {
+    display: flex; align-items: center; flex-wrap: wrap; gap: .4rem;
+    font-size: .75rem;
+    color: var(--paz-text-secondary);
+    margin-bottom: .15rem;
+}
+.paz-breadcrumb a { color: inherit; text-decoration: none; }
+.paz-breadcrumb a:hover { color: var(--paz-text-primary); text-decoration: underline; }
+.paz-breadcrumb .pi { font-size: .65rem; opacity: .7; }
+.paz-page-title {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--paz-text-primary);
+}
+.paz-page-subtitle {
+    margin: .2rem 0 0;
+    font-size: .875rem;
+    color: var(--paz-text-secondary);
+}
+.paz-page-actions { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+
+/* ── Panel / tarjeta ── */
+.paz-panel {
+    background: var(--paz-bg-card);
+    border: 1px solid var(--paz-border-color);
+    border-radius: var(--paz-radius);
+    box-shadow: var(--paz-shadow-sm);
+    padding: 1.5rem;
+}
+
+/* ── Indicadores (KPI) ── */
+.paz-stat {
+    background: var(--paz-bg-card);
+    border: 1px solid var(--paz-border-color);
+    border-radius: var(--paz-radius);
+    padding: 1rem 1.25rem;
+    display: flex; align-items: center; gap: .9rem;
+}
+.paz-stat-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--paz-bg-card-hover);
+    color: var(--paz-text-primary);
+}
+.paz-stat-valor { font-size: 1.35rem; font-weight: 700; color: var(--paz-text-primary); line-height: 1.1; }
+.paz-stat-etiqueta { font-size: .75rem; color: var(--paz-text-secondary); }
+
+/* ── Avatar con iniciales ── */
+.paz-avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    flex-shrink: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: .8rem; font-weight: 700; letter-spacing: .02em;
+    background: var(--paz-primary);
+    color: var(--paz-primary-text);
+}
+.paz-avatar-lg { width: 44px; height: 44px; font-size: .95rem; }
+
+/* ── Chip (ej. módulos asignados) ── */
+.paz-chip {
+    display: inline-flex; align-items: center; gap: .35rem;
+    padding: .2rem .6rem;
+    border-radius: 999px;
+    border: 1px solid var(--paz-border-color);
+    background: var(--paz-bg-card-hover);
+    color: var(--paz-text-primary);
+    font-size: .75rem; font-weight: 500;
+    white-space: nowrap;
+}
+.paz-chip .pi { font-size: .7rem; opacity: .8; }
+
+/* ── Insignia de estado ──
+   Antes el listado de carátulas pintaba todo en verde: "En Proceso" y
+   "Rechazada" se veían igual que "Finalizada". */
+.paz-estado {
+    display: inline-flex; align-items: center; gap: .35rem;
+    padding: .25rem .7rem;
+    border-radius: 999px;
+    font-size: .75rem; font-weight: 600;
+    white-space: nowrap;
+}
+.paz-estado::before {
+    content: ''; width: .45rem; height: .45rem; border-radius: 50%;
+    background: currentColor; opacity: .85;
+}
+.paz-estado--ok      { background: var(--paz-badge-success-bg); color: var(--paz-badge-success-text); }
+.paz-estado--proceso { background: var(--paz-badge-info-bg);    color: var(--paz-badge-info-text); }
+.paz-estado--alerta  { background: var(--paz-badge-warning-bg); color: var(--paz-badge-warning-text); }
+.paz-estado--error   { background: var(--paz-badge-error-bg);   color: var(--paz-badge-error-text); }
+.paz-estado--neutro  { background: var(--paz-badge-muted-bg);   color: var(--paz-badge-muted-text); }
+
+/* ── Navegación lateral ── */
+.paz-nav-seccion {
+    font-size: .7rem; font-weight: 700; letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--paz-text-secondary);
+    padding: .75rem .75rem .35rem;
+}
+.paz-nav-link {
+    display: flex; align-items: center; gap: .75rem;
+    padding: .7rem .75rem;
+    border-radius: 8px;
+    color: var(--paz-sidebar-text);
+    text-decoration: none;
+    font-weight: 500;
+    cursor: pointer;
+    border-left: 3px solid transparent;
+}
+.paz-nav-link .pi { font-size: 1rem; width: 1.25rem; text-align: center; }
+.paz-nav-link:hover { background: var(--paz-sidebar-hover); }
+.paz-nav-link.activo {
+    background: var(--paz-sidebar-active);
+    border-left-color: var(--paz-brand);
+    font-weight: 700;
+}
+.paz-nav-link.peligro { color: var(--paz-accent-red); }
+
+/* ── Toasts legibles en modo oscuro ── */
+html.dark-theme .p-toast .p-toast-message {
+    background: var(--paz-bg-card) !important;
+    border: 1px solid var(--paz-border-color) !important;
+    border-left-width: 4px !important;
+    color: var(--paz-text-primary) !important;
+}
+html.dark-theme .p-toast .p-toast-message .p-toast-detail { color: var(--paz-text-secondary) !important; }
+html.dark-theme .p-toast .p-toast-message-success { border-left-color: #22c55e !important; }
+html.dark-theme .p-toast .p-toast-message-info    { border-left-color: #38bdf8 !important; }
+html.dark-theme .p-toast .p-toast-message-warn    { border-left-color: #f59e0b !important; }
+html.dark-theme .p-toast .p-toast-message-error   { border-left-color: #f87171 !important; }
+
+/* ── Accesibilidad ── */
+:focus-visible {
+    outline: 2px solid var(--paz-brand);
+    outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+
+/* ── Diálogos y botones de selección en modo oscuro ──
+   El texto heredado dentro de p-dialog quedaba oscuro sobre fondo oscuro
+   (títulos y etiquetas de formularios invisibles). Aplica a todos los diálogos. */
+html.dark-theme .p-dialog,
+html.dark-theme .p-dialog .p-dialog-header,
+html.dark-theme .p-dialog .p-dialog-content,
+html.dark-theme .p-dialog .p-dialog-footer {
+    background: var(--paz-bg-card) !important;
+    color: var(--paz-text-primary) !important;
+}
+html.dark-theme .p-dialog { border: 1px solid var(--paz-border-color) !important; }
+html.dark-theme .p-dialog .p-dialog-title { color: var(--paz-text-primary) !important; }
+
+html.dark-theme .p-togglebutton {
+    background: var(--paz-bg-page) !important;
+    border-color: var(--paz-border-color) !important;
+    color: var(--paz-text-secondary) !important;
+}
+html.dark-theme .p-togglebutton .p-togglebutton-content { background: transparent !important; color: inherit !important; }
+html.dark-theme .p-togglebutton.p-togglebutton-checked .p-togglebutton-content {
+    background: #3f3f46 !important;
+    color: #fafafa !important;
+}
+html.dark-theme .p-togglebutton.p-disabled { opacity: .6; }

@@ -1,8 +1,11 @@
+<app-page-header
+    icono="pi pi-building"
+    titulo="Carátulas"
+    [migas]="['Conservador de Bienes']"
+    subtitulo="Consulta y seguimiento del estado de las carátulas en el Conservador de Bienes Raíces.">
+</app-page-header>
+
 <div class="flex flex-column gap-4">
-    <div class="flex align-items-center mb-2">
-        <button pButton pRipple icon="pi pi-building" class="p-button-rounded bg-paz-primary text-paz-primary-text border-none p-3 shadow-2 mr-4"></button>
-        <span class="text-600 font-medium">Conservador de Bienes / <span class="text-700 font-bold">Carátulas</span></span>
-    </div>
 
     <!-- Subcomponents -->
     <app-carga-caratula (cargaExitosa)="onCargaExitosa()"></app-carga-caratula>

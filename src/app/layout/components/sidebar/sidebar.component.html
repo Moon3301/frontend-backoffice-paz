@@ -1,47 +1,39 @@
 <p-sidebar [(visible)]="sidebarVisible" (onHide)="onHide()" [showCloseIcon]="true" position="left" styleClass="w-20rem">
-    
+
     <ng-template pTemplate="header">
-        
-        <div class="flex align-items-center justify-content-start font-bold text-xl text-paz-primary ">
-             <div class="flex align-items-center justify-content-center bg-red-700 font-bold mr-2" style="width: 40px; height: 40px;">
-                <img src="/images/logo-paz.png" alt="Logo Paz" class="w-2rem mr-2">
-            </div>
-            Menú Principal
+        <div class="flex align-items-center gap-2 font-bold text-lg text-paz-primary">
+            <span class="flex align-items-center justify-content-center border-round"
+                  style="width: 36px; height: 36px; background: var(--paz-brand);">
+                <img src="/images/logo-paz.png" alt="" style="width: 30px;">
+            </span>
+            Backoffice PAZ
         </div>
     </ng-template>
-    
-    
-    <div class="flex flex-column gap-2 mt-3">
-        <!-- inicio  agregar mensaje de que esta en desarrollo esta parte puede ser un boton flotante o lago asi-->
-        <a routerLink="/home" routerLinkActive="bg-black-alpha-10 text-paz-primary border-round font-bold" class="p-3 cursor-pointer text-700 hover:bg-white-alpha-10 transition-duration-150 transition-colors border-round no-underline flex align-items-center">
-            <i class="pi pi-home mr-3 text-lg"></i>
-            <span class="font-medium">Inicio</span>
-            <span class="text-xs text-red-500 ml-2">En desarrollo</span>
-        </a>
-        <!-- conservador -->
-        <a routerLink="/conservador" routerLinkActive="bg-black-alpha-10 text-paz-primary border-round font-bold" class="p-3 cursor-pointer text-700 hover:bg-white-alpha-10 transition-duration-150 transition-colors border-round no-underline flex align-items-center">
-            <i class="pi pi-building mr-3 text-lg"></i>
-            <span class="font-medium">Conservador de Bienes</span>
-        </a>
-        <!-- copropiedad diseno deshabilitar -->
-        <a routerLink="/copropiedad" routerLinkActive="bg-black-alpha-10 text-paz-primary border-round font-bold " class="p-3 cursor-pointer text-700 hover:bg-white-alpha-10 transition-duration-150 transition-colors border-round no-underline flex align-items-center">
-            <i class="pi pi-users mr-3 text-lg"></i>
-            <span class="font-medium">Copropiedad</span>
+
+    <nav class="flex flex-column gap-1 mt-2" aria-label="Menú principal">
+        <a routerLink="/home" routerLinkActive="activo" class="paz-nav-link" (click)="navegar()">
+            <i class="pi pi-home"></i><span>Inicio</span>
         </a>
 
-        <hr class="w-full border-top-1 border-none surface-border mt-3 mb-3">
+        <ng-container *ngIf="modulosVisibles.length">
+            <div class="paz-nav-seccion">Módulos</div>
+            <a *ngFor="let m of modulosVisibles" [routerLink]="m.ruta" routerLinkActive="activo" class="paz-nav-link" (click)="navegar()">
+                <i [class]="m.icono"></i><span>{{ m.nombre }}</span>
+            </a>
+        </ng-container>
 
-        <a routerLink="/leads" routerLinkActive="bg-black-alpha-10 text-paz-primary border-round font-bold " class="p-3 cursor-pointer text-700 hover:bg-white-alpha-10 transition-duration-150 transition-colors border-round no-underline flex align-items-center">
-            <i class="pi pi-briefcase mr-3 text-lg"></i>
-            <span class="font-medium">Testing Leads</span>
-        </a>
+        <ng-container *ngIf="perfil?.rol === 'admin'">
+            <div class="paz-nav-seccion">Administración</div>
+            <a routerLink="/usuarios" routerLinkActive="activo" class="paz-nav-link" (click)="navegar()">
+                <i class="pi pi-shield"></i><span>Usuarios y permisos</span>
+            </a>
+        </ng-container>
 
-        <hr class="w-full border-top-1 border-none surface-border mt-3 mb-3">
-        <a (click)="logout()" class="p-3 cursor-pointer text-red-500 hover:bg-red-50 transition-duration-150 transition-colors border-round no-underline flex align-items-center">
-            <i class="pi pi-sign-out mr-3 text-lg"></i>
-            <span class="font-medium">Cerrar Sesión</span>
+        <hr class="w-full border-top-1 border-none surface-border my-3">
+
+        <a role="button" tabindex="0" class="paz-nav-link peligro" (click)="logout()" (keyup.enter)="logout()">
+            <i class="pi pi-sign-out"></i><span>Cerrar sesión</span>
         </a>
-    </div>
+    </nav>
 
 </p-sidebar>
-

@@ -1,0 +1,207 @@
+<app-page-header
+  icono="pi pi-shield"
+  titulo="Usuarios y permisos"
+  [migas]="['Administración']"
+  subtitulo="Crea cuentas y define a qué módulos puede entrar cada usuario. Los administradores acceden a todo.">
+  <button pButton pRipple type="button" label="Nuevo usuario" icon="pi pi-user-plus" (click)="abrirNuevo()"></button>
+</app-page-header>
+
+<!-- Indicadores -->
+<div class="grid mb-3">
+  <div class="col-12 md:col-4">
+    <div class="paz-stat">
+      <div class="paz-stat-icon"><i class="pi pi-users"></i></div>
+      <div><div class="paz-stat-valor">{{ usuarios.length }}</div><div class="paz-stat-etiqueta">Usuarios registrados</div></div>
+    </div>
+  </div>
+  <div class="col-12 md:col-4">
+    <div class="paz-stat">
+      <div class="paz-stat-icon"><i class="pi pi-check-circle"></i></div>
+      <div><div class="paz-stat-valor">{{ totalActivos }}</div><div class="paz-stat-etiqueta">Activos</div></div>
+    </div>
+  </div>
+  <div class="col-12 md:col-4">
+    <div class="paz-stat">
+      <div class="paz-stat-icon"><i class="pi pi-shield"></i></div>
+      <div><div class="paz-stat-valor">{{ totalAdmins }}</div><div class="paz-stat-etiqueta">Administradores</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="paz-panel">
+  <div class="flex align-items-center justify-content-between flex-wrap gap-3 mb-3">
+    <p-iconfield class="w-full md:w-20rem">
+      <p-inputicon styleClass="pi pi-search" />
+      <input pInputText type="text" [(ngModel)]="filtro" placeholder="Buscar por nombre, correo o RUT" class="w-full" aria-label="Buscar usuario" />
+    </p-iconfield>
+    <span class="text-500 text-sm" *ngIf="filtro">{{ usuariosFiltrados.length }} de {{ usuarios.length }}</span>
+  </div>
+
+  <div class="overflow-x-auto">
+    <p-table [value]="usuariosFiltrados" [loading]="cargando" dataKey="uuid"
+             styleClass="p-datatable-sm" [tableStyle]="{ 'min-width': '52rem' }">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Usuario</th>
+          <th style="width: 9rem">Rol</th>
+          <th>Módulos con acceso</th>
+          <th style="width: 7rem">Estado</th>
+          <th style="width: 9rem" class="text-right">Acciones</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-u>
+        <tr [class.opacity-60]="!u.isActive">
+          <td>
+            <div class="flex align-items-center gap-3">
+              <span class="paz-avatar">{{ iniciales(u.nombre) }}</span>
+              <div class="min-w-0">
+                <div class="font-semibold text-900">
+                  {{ u.nombre }}
+                  <span *ngIf="esYo(u)" class="paz-chip ml-1">Tú</span>
+                </div>
+                <div class="text-500 text-sm">{{ u.email }}</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <span class="paz-estado" [ngClass]="u.rol === 'admin' ? 'paz-estado--alerta' : 'paz-estado--neutro'">
+              {{ etiquetaRol(u.rol) }}
+            </span>
+          </td>
+          <td>
+            <div class="flex flex-wrap gap-1">
+              <span *ngIf="u.rol === 'admin'" class="paz-chip"><i class="pi pi-star"></i>Todos los módulos</span>
+              <ng-container *ngIf="u.rol !== 'admin'">
+                <span *ngFor="let m of u.modulos" class="paz-chip">{{ nombreModulo(m) }}</span>
+                <span *ngIf="u.modulos.length === 0" class="text-500 text-sm font-italic">Sin módulos (solo Inicio)</span>
+              </ng-container>
+            </div>
+          </td>
+          <td>
+            <span class="paz-estado" [ngClass]="u.isActive ? 'paz-estado--ok' : 'paz-estado--neutro'">
+              {{ u.isActive ? 'Activo' : 'Inactivo' }}
+            </span>
+          </td>
+          <td class="text-right white-space-nowrap">
+            <button pButton type="button" icon="pi pi-pencil" class="p-button-text p-button-rounded p-button-sm"
+                    pTooltip="Editar datos y permisos" tooltipPosition="top" (click)="abrirEditar(u)"
+                    [attr.aria-label]="'Editar ' + u.nombre"></button>
+            <button pButton type="button" icon="pi pi-key" class="p-button-text p-button-rounded p-button-sm"
+                    pTooltip="Restablecer contraseña" tooltipPosition="top" (click)="abrirPassword(u)"
+                    [attr.aria-label]="'Restablecer contraseña de ' + u.nombre"></button>
+            <button pButton type="button" class="p-button-text p-button-rounded p-button-sm"
+                    [icon]="u.isActive ? 'pi pi-ban' : 'pi pi-check-circle'"
+                    [pTooltip]="esYo(u) ? 'No puedes desactivar tu propia cuenta' : (u.isActive ? 'Desactivar' : 'Activar')"
+                    tooltipPosition="top" [disabled]="esYo(u)" (click)="alternarActivo(u)"
+                    [attr.aria-label]="(u.isActive ? 'Desactivar ' : 'Activar ') + u.nombre"></button>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="5">
+            <div class="flex flex-column align-items-center py-6 gap-2 text-500">
+              <i class="pi pi-users text-4xl"></i>
+              <span>{{ filtro ? 'Ningún usuario coincide con la búsqueda.' : 'Aún no hay usuarios.' }}</span>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+<!-- ───── Crear / editar ───── -->
+<p-dialog [(visible)]="formVisible" [modal]="true" [draggable]="false" [style]="{ width: '40rem' }"
+          [breakpoints]="{ '640px': '95vw' }" [header]="editando ? 'Editar usuario' : 'Nuevo usuario'">
+  <form [formGroup]="form" (ngSubmit)="guardar()" id="form-usuario" class="flex flex-column gap-3">
+    <div class="grid">
+      <div class="col-12 md:col-6 field mb-0">
+        <label for="u-nombre" class="block font-medium mb-2">Nombre completo</label>
+        <input id="u-nombre" pInputText formControlName="nombre" class="w-full" autocomplete="off" />
+        <small class="p-error" *ngIf="f['nombre'].touched && f['nombre'].invalid">Ingresa al menos 3 caracteres.</small>
+      </div>
+      <div class="col-12 md:col-6 field mb-0">
+        <label for="u-email" class="block font-medium mb-2">Correo</label>
+        <input id="u-email" pInputText formControlName="email" class="w-full" autocomplete="off" placeholder="nombre@pazcorp.cl" />
+        <small class="text-500 text-xs" *ngIf="editando">El correo identifica la cuenta y no se puede cambiar.</small>
+        <small class="p-error" *ngIf="f['email'].touched && f['email'].invalid">Ingresa un correo válido.</small>
+      </div>
+      <div class="col-12 md:col-6 field mb-0">
+        <label for="u-rut" class="block font-medium mb-2">RUT</label>
+        <input id="u-rut" pInputText formControlName="taxId" class="w-full" autocomplete="off" placeholder="12.345.678-9" />
+        <small class="p-error" *ngIf="f['taxId'].touched && f['taxId'].errors?.['rut'] as motivo">{{ motivo }}</small>
+        <small class="p-error" *ngIf="f['taxId'].touched && f['taxId'].errors?.['required']">El RUT es obligatorio.</small>
+      </div>
+      <div class="col-12 md:col-6 field mb-0">
+        <label for="u-fono" class="block font-medium mb-2">Teléfono <span class="text-500 font-normal">(opcional)</span></label>
+        <input id="u-fono" pInputText formControlName="phone" class="w-full" autocomplete="off" placeholder="+56912345678" />
+        <small class="p-error" *ngIf="f['phone'].touched && f['phone'].invalid">Formato esperado: +56912345678.</small>
+      </div>
+      <div class="col-12 field mb-0" *ngIf="!editando">
+        <label for="u-pass" class="block font-medium mb-2">Contraseña inicial</label>
+        <p-password inputId="u-pass" formControlName="password" [toggleMask]="true" [feedback]="false"
+                    styleClass="w-full" inputStyleClass="w-full" autocomplete="new-password"></p-password>
+        <small class="text-500 text-xs block mt-1">Mínimo 8 caracteres, con al menos una letra y un número.</small>
+        <small class="p-error" *ngIf="f['password'].touched && f['password'].invalid">La contraseña no cumple los requisitos.</small>
+      </div>
+    </div>
+
+    <div>
+      <label class="block font-medium mb-2">Rol</label>
+      <p-selectButton [options]="rolOpciones" formControlName="rol" optionLabel="label" optionValue="value"
+                      [allowEmpty]="false">
+        <ng-template let-o pTemplate="item"><i [class]="o.icon" class="mr-2"></i>{{ o.label }}</ng-template>
+      </p-selectButton>
+      <small class="text-500 text-xs block mt-1" *ngIf="rolBloqueado">No puedes cambiar tu propio rol.</small>
+    </div>
+
+    <div>
+      <label class="block font-medium mb-2">Módulos con acceso</label>
+      <div *ngIf="form.value.rol === 'admin' || (rolBloqueado && editando?.rol === 'admin')" class="paz-chip py-2 px-3">
+        <i class="pi pi-star"></i> Los administradores acceden a todos los módulos.
+      </div>
+      <div *ngIf="form.value.rol !== 'admin' && !(rolBloqueado && editando?.rol === 'admin')" class="flex flex-column gap-2">
+        <label *ngFor="let m of modulos" class="modulo-opcion" [class.marcado]="moduloMarcado(m.codigo)">
+          <p-checkbox [binary]="true" [ngModel]="moduloMarcado(m.codigo)" [ngModelOptions]="{ standalone: true }"
+                      (onChange)="alternarModulo(m.codigo, $event.checked)" [inputId]="'mod-' + m.codigo"></p-checkbox>
+          <i [class]="m.icono" class="text-lg"></i>
+          <span class="flex-1">
+            <span class="font-semibold block">{{ m.nombre }}</span>
+            <span class="text-500 text-sm">{{ m.descripcion }}</span>
+          </span>
+        </label>
+        <small class="text-500 text-xs">Sin módulos marcados, el usuario solo verá la página de Inicio.</small>
+      </div>
+    </div>
+  </form>
+
+  <ng-template pTemplate="footer">
+    <button pButton type="button" label="Cancelar" class="p-button-text" (click)="formVisible = false"></button>
+    <button pButton type="submit" form="form-usuario" [label]="editando ? 'Guardar cambios' : 'Crear usuario'"
+            icon="pi pi-check" [loading]="guardando"></button>
+  </ng-template>
+</p-dialog>
+
+<!-- ───── Restablecer contraseña ───── -->
+<p-dialog [(visible)]="passwordVisible" [modal]="true" [draggable]="false" [style]="{ width: '28rem' }"
+          [breakpoints]="{ '640px': '95vw' }" header="Restablecer contraseña">
+  <p class="mt-0 text-600">
+    Nueva contraseña para <strong>{{ passwordUsuario?.nombre }}</strong>. La actual dejará de funcionar de inmediato.
+  </p>
+  <p-password [(ngModel)]="passwordNueva" [toggleMask]="true" [feedback]="false" styleClass="w-full"
+              inputStyleClass="w-full" autocomplete="new-password" inputId="pass-nueva"
+              (keyup.enter)="guardarPassword()"></p-password>
+  <small class="block mt-2" [ngClass]="passwordNueva && !passwordValida ? 'p-error' : 'text-500'">
+    Mínimo 8 caracteres, con al menos una letra y un número.
+  </small>
+  <ng-template pTemplate="footer">
+    <button pButton type="button" label="Cancelar" class="p-button-text" (click)="passwordVisible = false"></button>
+    <button pButton type="button" label="Restablecer" icon="pi pi-key" [disabled]="!passwordValida"
+            [loading]="passwordGuardando" (click)="guardarPassword()"></button>
+  </ng-template>
+</p-dialog>
+
+<p-confirmDialog [style]="{ width: '30rem' }" [breakpoints]="{ '640px': '95vw' }"></p-confirmDialog>

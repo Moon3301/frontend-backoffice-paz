@@ -7,6 +7,7 @@ import {
   ActualizacionCaratulasService,
   EjecucionActualizacion,
 } from '../../../../core/services/actualizacion-caratulas.service';
+import { claseEstadoCaratula } from '../../estado-caratula';
 
 @Component({
   selector: 'app-caratulas-generadas',
@@ -135,12 +136,7 @@ export class CaratulasGeneradasComponent implements OnInit, OnDestroy {
     this.modalVisible = true;
   }
 
-  getSeverity(status: string) {
-    switch (status) {
-      case 'Generado':   return 'success';
-      case 'Procesando': return 'warning';
-      case 'Error':      return 'danger';
-      default:           return 'info';
-    }
+  claseEstado(c: CaratulasResponseDto): string {
+    return claseEstadoCaratula(c.estado_codigo, c.estado_actual);
   }
 }

@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TestingLeadsService } from '../../services/testing-leads.service';
+import { rutValidator } from '../../../../core/validators/rut.validators';
 
 export interface SelectOption {
   label: string;
@@ -181,7 +182,7 @@ export class CrearLeadComponent {
     private testingLeadsService: TestingLeadsService
   ) {
     this.leadForm = this.fb.group({
-      Run:                  ['', [Validators.required]],
+      Run:                  ['', [Validators.required, rutValidator]],
       Nombre:               ['', [Validators.required]],
       Apellido:             ['', [Validators.required]],
       Email:                ['', [Validators.required, Validators.email]],
@@ -292,8 +293,6 @@ export class CrearLeadComponent {
       Clasificacion:          '',
       Corredor:               v.Corredor ? 1 : 0,
     };
-
-    console.log('payload', payload);
 
     try {
       await this.testingLeadsService.crearLead(payload as any);

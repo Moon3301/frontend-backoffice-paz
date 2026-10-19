@@ -1,6 +1,13 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
+/**
+ * Recuperación de contraseña.
+ *
+ * El backend no envía correos de recuperación (ese flujo está deshabilitado),
+ * así que antes esta pantalla pedía un correo y no hacía nada: el usuario
+ * creía haber solicitado un enlace que nunca llegaba. Ahora explica el
+ * proceso real: un administrador la restablece desde Usuarios y permisos.
+ */
 @Component({
   selector: 'app-password-recovery-page',
   standalone: false,
@@ -8,22 +15,5 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   styleUrl: './password-recovery-page.component.css'
 })
 export class PasswordRecoveryPageComponent {
-
-  recoveryForm: FormGroup;
-
-  constructor(private fb: FormBuilder) {
-    this.recoveryForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]]
-    });
-  }
-
-  onSubmit() {
-    if (this.recoveryForm.valid) {
-      console.log('Recovery form submitted:', this.recoveryForm.value);
-      // Here you would typically call your password recovery service
-    } else {
-      this.recoveryForm.markAllAsTouched();
-    }
-  }
-
+  readonly anio = new Date().getFullYear();
 }

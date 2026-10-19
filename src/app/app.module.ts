@@ -10,6 +10,13 @@ import Aura from '@primeng/themes/aura';
 import { provideHttpClient, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
 import { jwtInterceptor } from './core/interceptors/jwt.interceptor';
 import { MessageService } from 'primeng/api';
+import { registerLocaleData } from '@angular/common';
+import localeEsCl from '@angular/common/locales/es-CL';
+
+// Datos de formato chileno para usar `date:...:'es-CL'` donde se necesite
+// (ej. la fecha en Inicio). No se cambia LOCALE_ID global para no alterar el
+// formato de fechas y números que ya muestran los módulos.
+registerLocaleData(localeEsCl, 'es-CL');
 
 @NgModule({
   declarations: [

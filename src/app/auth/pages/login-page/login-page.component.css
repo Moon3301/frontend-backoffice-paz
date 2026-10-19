@@ -1,0 +1,91 @@
+.login {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  background: var(--paz-bg-page);
+}
+@media (min-width: 900px) {
+  .login { grid-template-columns: minmax(320px, 5fr) 7fr; }
+}
+
+/* ── Panel de marca ── */
+.login-marca {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 3rem;
+  color: #fff;
+  background:
+    radial-gradient(circle at 15% 85%, rgba(185, 28, 28, .45), transparent 55%),
+    linear-gradient(160deg, #0f172a 0%, #020617 100%);
+}
+@media (min-width: 900px) { .login-marca { display: flex; } }
+
+.login-marca-logo {
+  width: 64px;
+  height: 64px;
+  border-radius: 14px;
+  background: var(--paz-brand);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .35);
+}
+.login-marca-logo img { width: 52px; }
+.login-marca-titulo { font-size: 2rem; font-weight: 700; margin: 0 0 .75rem; }
+.login-marca-texto { margin: 0 0 1.75rem; color: rgba(255, 255, 255, .75); line-height: 1.6; max-width: 26rem; }
+.login-marca-lista { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: .85rem; }
+.login-marca-lista li { display: flex; align-items: center; gap: .75rem; color: rgba(255, 255, 255, .9); }
+.login-marca-lista .pi {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.login-marca-pie { font-size: .8rem; color: rgba(255, 255, 255, .55); }
+
+/* ── Zona del formulario ── */
+.login-form-zona {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.25rem;
+}
+.login-card { width: 100%; max-width: 400px; }
+.login-logo-movil {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  background: var(--paz-brand);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+.login-logo-movil img { width: 46px; }
+@media (min-width: 900px) { .login-logo-movil { display: none; } }
+
+/* Antes el enlace era blanco fijo: invisible sobre la tarjeta blanca del modo claro. */
+.login-link { color: var(--paz-text-primary); font-weight: 500; text-decoration: none; }
+.login-link:hover { text-decoration: underline; }
+
+.login-aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: .6rem;
+  padding: .75rem 1rem;
+  border-radius: 10px;
+  font-size: .875rem;
+  border: 1px solid;
+}
+.login-aviso .pi { margin-top: .1rem; }
+.login-aviso--error { background: var(--paz-error-banner-bg); border-color: var(--paz-error-banner-border); color: var(--paz-badge-error-text); }
+.login-aviso--info  { background: var(--paz-badge-info-bg); border-color: transparent; color: var(--paz-badge-info-text); }
+
+:host ::ng-deep .p-iconfield,
+:host ::ng-deep .p-password { width: 100%; }

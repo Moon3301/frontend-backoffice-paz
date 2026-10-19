@@ -19,6 +19,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { MessageService, ConfirmationService } from 'primeng/api';
+import { SharedModule } from '../../shared/shared.module';
 
 // Componentes
 import { CopropiedadPageComponent } from './pages/copropiedad-page/copropiedad-page.component';
@@ -35,6 +36,7 @@ import { ModalEnvioComponent } from './components/modal-envio/modal-envio.compon
   ],
   imports: [
     CommonModule,
+    SharedModule,
     FormsModule,
     CopropiedadRoutingModule,
     TabsModule,

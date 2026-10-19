@@ -1,22 +1,28 @@
-<div class="flex align-items-center justify-content-between px-4 py-3 bg-paz-header shadow-2 sticky top-0 z-5"
-    style="height: 70px;">
-    <div class="flex align-items-center gap-4 w-4">
-        <button pButton pRipple type="button" icon="pi pi-bars" class="p-button-text p-button-rounded text-white"
-            (click)="toggleMenu()"></button>
-        <div class="flex align-items-center justify-content-center bg-red-700 font-bold" style="width: 40px; height: 40px;">
-            <img src="/images/logo-paz.png" alt="Logo PAZ" style="width: 35px;">
-        </div>
+<header class="paz-header bg-paz-header">
+    <div class="flex align-items-center gap-3">
+        <button pButton pRipple type="button" icon="pi pi-bars" class="p-button-text p-button-rounded text-pure-white"
+                (click)="toggleMenu()" aria-label="Abrir menú"></button>
+        <a routerLink="/home" class="flex align-items-center gap-2 no-underline text-pure-white" aria-label="Ir al inicio">
+            <span class="paz-header-logo"><img src="/images/logo-paz.png" alt="" /></span>
+            <span class="font-bold text-lg hidden sm:inline">Backoffice</span>
+        </a>
     </div>
 
-    <div class="w-4 text-center">
-        
-    </div>
+    <div class="flex align-items-center gap-2">
+        <app-theme-toggle customClass="text-pure-white"></app-theme-toggle>
 
-    <div class="w-4 flex align-items-center justify-content-end gap-3">
-        <!-- <button pButton pRipple type="button" icon="pi pi-bell"
-            class="p-button-text p-button-rounded text-white"></button>
-        <button pButton pRipple type="button" icon="pi pi-user"
-            class="p-button-text p-button-rounded text-white"></button> -->
-        <app-theme-toggle></app-theme-toggle>
+        <ng-container *ngIf="perfil$ | async as perfil">
+            <div class="paz-header-usuario">
+                <span class="paz-avatar paz-header-avatar">{{ iniciales(perfil.nombre) }}</span>
+                <div class="hidden md:block line-height-2">
+                    <div class="font-semibold text-sm">{{ perfil.nombre }}</div>
+                    <div class="text-xs opacity-70">{{ rolEtiqueta[perfil.rol] }}</div>
+                </div>
+            </div>
+            <button pButton pRipple type="button" icon="pi pi-sign-out"
+                    class="p-button-text p-button-rounded text-pure-white"
+                    pTooltip="Cerrar sesión" tooltipPosition="bottom"
+                    (click)="logout()" aria-label="Cerrar sesión"></button>
+        </ng-container>
     </div>
-</div>
+</header>

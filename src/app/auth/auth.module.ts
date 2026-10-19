@@ -10,6 +10,8 @@ import { PasswordModule } from 'primeng/password';
 import { CheckboxModule } from 'primeng/checkbox';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
 
 import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { PasswordRecoveryPageComponent } from './pages/password-recovery-page/password-recovery-page.component';
@@ -28,6 +30,8 @@ import { PasswordRecoveryPageComponent } from './pages/password-recovery-page/pa
     CheckboxModule,
     ButtonModule,
     CardModule,
+    IconFieldModule,
+    InputIconModule,
     SharedModule
   ]
 })

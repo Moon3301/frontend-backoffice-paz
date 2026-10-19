@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-login-page',
@@ -9,23 +10,36 @@ import { Router } from '@angular/router';
   templateUrl: './login-page.component.html',
   styleUrl: './login-page.component.css'
 })
-export class LoginPageComponent {
+export class LoginPageComponent implements OnInit {
 
   loginForm: FormGroup;
   isLoading = false;
   loginError: string | null = null;
+  /** Aviso cuando se llega al login porque la sesión expiró. */
+  avisoSesion: string | null = null;
+  readonly anio = new Date().getFullYear();
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute,
   ) {
+    const recordado = this.authService.emailRecordado;
     this.loginForm = this.fb.group({
-      email:      ['', [Validators.required, Validators.email]],
-      password:   ['', [Validators.required, Validators.minLength(6)]],
-      rememberMe: [false]
+      email:      [recordado ?? '', [Validators.required, Validators.email]],
+      password:   ['', [Validators.required]],
+      rememberMe: [!!recordado]
     });
   }
+
+  ngOnInit(): void {
+    if (this.route.snapshot.queryParamMap.get('motivo') === 'sesion') {
+      this.avisoSesion = 'Tu sesión expiró o fue cerrada. Vuelve a ingresar para continuar.';
+    }
+  }
+
+  get f() { return this.loginForm.controls; }
 
   async onSubmit() {
     if (this.loginForm.invalid) {
@@ -36,16 +50,39 @@ export class LoginPageComponent {
     this.isLoading = true;
     this.loginError = null;
 
+    const { email, password, rememberMe } = this.loginForm.value;
+    const correo = String(email).trim();
+
     try {
-      const response = await this.authService.login(this.loginForm.value);
+      const response = await this.authService.login({ email: correo, password });
+      // "Recordarme" guarda solo el correo (nunca la contraseña).
+      this.authService.recordarEmail(rememberMe ? correo : null);
       if (response) {
-        this.router.navigate(['/home']);
+        await this.router.navigateByUrl(this.destinoTrasLogin());
       }
-    } catch (err: any) {
-      this.loginError = err?.error?.message ?? 'Credenciales incorrectas. Verifica tu correo y contraseña.';
+    } catch (err) {
+      this.loginError = this.mensajeError(err as HttpErrorResponse);
     } finally {
       this.isLoading = false;
     }
   }
 
+  /**
+   * Vuelve a la página que se intentaba abrir (la deja el guard en returnUrl).
+   * Antes siempre iba a /home. Solo se aceptan rutas internas para no
+   * permitir redirecciones a sitios externos.
+   */
+  private destinoTrasLogin(): string {
+    const url = this.route.snapshot.queryParamMap.get('returnUrl');
+    const esInterna = !!url && url.startsWith('/') && !url.startsWith('//') && !url.startsWith('/auth');
+    return esInterna ? url! : '/home';
+  }
+
+  private mensajeError(err: HttpErrorResponse): string {
+    if (err?.status === 0) return 'No se pudo conectar con el servidor. Revisa tu conexión e intenta nuevamente.';
+    const m = err?.error?.message;
+    if (Array.isArray(m)) return m.join(' · ');
+    if (typeof m === 'string' && m) return m;
+    return 'No se pudo iniciar sesión. Intenta nuevamente.';
+  }
 }

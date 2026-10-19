@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CaratulasResponseDto, Documento, Observacion } from '../../dto/caratulas-response.dto';
 import { ConservadorService } from '../../services/conservador.service';
+import { claseEstadoCaratula } from '../../estado-caratula';
 
 @Component({
   selector: 'app-modal-caratula',
@@ -59,17 +60,8 @@ export class ModalCaratulaComponent {
     };
   }
 
-  getEstadoStyle(estado: string): { [key: string]: string } {
-    switch (estado) {
-      case 'Finalizada':
-        return { 'background-color': '#bbf7d0', 'color': '#166534' };
-      case 'Procesando':
-        return { 'background-color': '#fef08a', 'color': '#854d0e' };
-      case 'Error':
-        return { 'background-color': '#fecaca', 'color': '#991b1b' };
-      default:
-        return { 'background-color': '#e0f2fe', 'color': '#0369a1' };
-    }
+  claseEstado(c: CaratulasResponseDto): string {
+    return claseEstadoCaratula(c.estado_codigo, c.estado_actual);
   }
 
   isDescargando(docId: number): boolean {
@@ -102,7 +94,8 @@ export class ModalCaratulaComponent {
     this.descargandoIds.add(doc.id);
     this.errorDescargaId = null;
 
-    const nombreArchivo = `${doc.tipoDocumento.replace(/\s+/g, '_')}_${doc.id}.pdf`;
+    // tipoDocumento puede venir vacío desde el Conservador: antes eso rompía la descarga.
+    const nombreArchivo = `${(doc.tipoDocumento || 'documento').replace(/\s+/g, '_')}_${doc.id}.pdf`;
 
     try {
       await this.conservadorService.descargarDocumento(doc.id, nombreArchivo);

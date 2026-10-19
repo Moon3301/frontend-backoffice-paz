@@ -1,0 +1,11 @@
+.modulo-opcion {
+  display: flex;
+  align-items: center;
+  gap: .85rem;
+  padding: .75rem 1rem;
+  border: 1px solid var(--paz-border-color);
+  border-radius: 10px;
+  cursor: pointer;
+}
+.modulo-opcion:hover { background: var(--paz-bg-card-hover); }
+.modulo-opcion.marcado { border-color: var(--paz-primary); background: var(--paz-bg-card-hover); }

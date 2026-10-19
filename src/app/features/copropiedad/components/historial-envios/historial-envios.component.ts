@@ -54,11 +54,17 @@ export class HistorialEnviosComponent implements OnInit {
     };
   }
 
+  /**
+   * Fecha en hora LOCAL ("YYYY-MM-DDTHH:mm:ss"). createdAt se guarda en hora
+   * local; antes se enviaba toISOString() (UTC), lo que corría el rango 3
+   * horas: "desde hoy" excluía lo enviado de madrugada y "hasta hoy" incluía
+   * parte del día siguiente.
+   */
   private toIsoDate(d: Date, endOfDay: boolean): string {
     const date = new Date(d);
-    if (endOfDay) date.setHours(23, 59, 59, 999);
-    else date.setHours(0, 0, 0, 0);
-    return date.toISOString();
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const dia = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+    return `${dia}T${endOfDay ? '23:59:59' : '00:00:00'}`;
   }
 
   async fetchEnvios(page: number, limit: number): Promise<void> {

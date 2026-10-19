@@ -1,1 +1,50 @@
-<p>home works!</p>
+<section class="home-bienvenida paz-panel mb-4">
+    <div>
+        <div class="home-fecha text-500 text-sm mb-1">{{ hoy | date:'EEEE d \'de\' MMMM \'de\' y':'':'es-CL' }}</div>
+        <h1 class="paz-page-title">{{ saludo }}{{ primerNombre ? ', ' + primerNombre : '' }}</h1>
+        <p class="paz-page-subtitle" *ngIf="perfil">
+            Ingresaste como <strong>{{ rolEtiqueta[perfil.rol] }}</strong>.
+            <ng-container *ngIf="perfil.rol === 'admin'">Tienes acceso a todos los módulos y a la administración de usuarios.</ng-container>
+            <ng-container *ngIf="perfil.rol !== 'admin' && modulos.length">
+                Tienes acceso a {{ modulos.length }} {{ modulos.length === 1 ? 'módulo' : 'módulos' }}.
+            </ng-container>
+        </p>
+    </div>
+</section>
+
+<h2 class="home-titulo-seccion" *ngIf="modulos.length">Tus módulos</h2>
+
+<div class="grid" *ngIf="modulos.length; else sinModulos">
+    <div class="col-12 md:col-6 xl:col-4" *ngFor="let m of modulos">
+        <a [routerLink]="m.ruta" class="home-modulo paz-panel">
+            <span class="home-modulo-icono"><i [class]="m.icono"></i></span>
+            <span class="flex-1 min-w-0">
+                <span class="home-modulo-nombre">{{ m.nombre }}</span>
+                <span class="home-modulo-desc">{{ m.descripcion }}</span>
+            </span>
+            <i class="pi pi-arrow-right home-modulo-flecha"></i>
+        </a>
+    </div>
+
+    <div class="col-12 md:col-6 xl:col-4" *ngIf="perfil?.rol === 'admin'">
+        <a routerLink="/usuarios" class="home-modulo paz-panel">
+            <span class="home-modulo-icono home-modulo-icono--admin"><i class="pi pi-shield"></i></span>
+            <span class="flex-1 min-w-0">
+                <span class="home-modulo-nombre">Usuarios y permisos</span>
+                <span class="home-modulo-desc">Crea cuentas y asigna a qué módulos puede entrar cada usuario.</span>
+            </span>
+            <i class="pi pi-arrow-right home-modulo-flecha"></i>
+        </a>
+    </div>
+</div>
+
+<ng-template #sinModulos>
+    <div class="paz-panel flex flex-column align-items-center text-center py-6 gap-2">
+        <i class="pi pi-lock text-4xl text-500"></i>
+        <div class="text-900 font-semibold text-lg">Aún no tienes módulos asignados</div>
+        <p class="text-600 m-0" style="max-width: 32rem;">
+            Tu cuenta está activa, pero un administrador debe habilitarte los módulos que necesitas.
+            Cuando lo haga, aparecerán aquí y en el menú.
+        </p>
+    </div>
+</ng-template>
