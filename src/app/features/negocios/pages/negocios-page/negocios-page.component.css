@@ -1,0 +1,216 @@
+/* ── Buscador ── */
+:host ::ng-deep .buscador .p-autocomplete-input {
+  font-size: 1.05rem;
+  padding: .85rem 1rem;
+}
+.sugerencia {
+  display: flex;
+  align-items: center;
+  gap: .85rem;
+  width: 100%;
+  padding: .25rem 0;
+}
+.sugerencia-nombre,
+.sugerencia-proyectos {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Estado inicial ── */
+.vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: .5rem;
+  padding: 3rem 1.5rem;
+}
+.vacio p { max-width: 34rem; }
+.vacio-icono {
+  font-size: 2.25rem;
+  color: var(--paz-text-secondary);
+  margin-bottom: .5rem;
+}
+
+/* ── Cliente ── */
+.cliente-nombre {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--paz-text-primary);
+}
+.contacto {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: .75rem 1.5rem;
+  margin: 1.25rem 0 0;
+  padding-top: 1rem;
+  border-top: 1px solid var(--paz-border-color);
+}
+.contacto dt,
+.campos dt {
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--paz-text-secondary);
+}
+.contacto dd,
+.campos dd {
+  margin: .15rem 0 0;
+  color: var(--paz-text-primary);
+  word-break: break-word;
+}
+.contacto a { color: inherit; }
+
+/* ── Varios negocios ── */
+.aviso-negocios {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  padding: .75rem 1rem;
+  margin-bottom: .75rem;
+  border-radius: 10px;
+  background: var(--paz-badge-warning-bg);
+  color: var(--paz-badge-warning-text);
+}
+.negocios-lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  gap: .75rem;
+  margin-bottom: 1rem;
+}
+.negocio-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: .15rem;
+  text-align: left;
+  padding: .9rem 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--paz-border-color);
+  background: var(--paz-bg-card);
+  color: var(--paz-text-primary);
+  cursor: pointer;
+  font: inherit;
+}
+.negocio-tab:hover { border-color: var(--paz-text-secondary); }
+.negocio-tab.activo {
+  border: 2px solid var(--paz-primary);
+  box-shadow: var(--paz-shadow-sm);
+}
+.negocio-proyecto { font-weight: 700; }
+
+/* ── Cabecera de sección ── */
+.seccion-cab {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+.seccion-cab h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--paz-text-primary);
+}
+.seccion-cab > .pi { color: var(--paz-text-secondary); }
+.seccion-area {
+  margin-left: auto;
+  font-size: .72rem;
+  padding: .2rem .6rem;
+  border-radius: 999px;
+  background: var(--paz-badge-info-bg);
+  color: var(--paz-badge-info-text);
+  white-space: nowrap;
+}
+
+/* ── Línea de tiempo de hitos ── */
+.hitos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  gap: 1rem .5rem;
+  position: relative;
+}
+.hitos li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: .35rem;
+  position: relative;
+}
+/* Línea que une los hitos (en pantallas anchas) */
+@media (min-width: 768px) {
+  .hitos li:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 16px;
+    left: calc(50% + 20px);
+    width: calc(100% - 40px);
+    height: 2px;
+    background: var(--paz-border-color);
+  }
+  .hitos li.cumplido:not(:last-child)::after { background: var(--paz-badge-success-text); opacity: .5; }
+}
+.hito-punto {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--paz-border-color);
+  background: var(--paz-bg-card);
+  color: var(--paz-text-secondary);
+  font-size: .8rem;
+  z-index: 1;
+}
+.cumplido .hito-punto {
+  border-color: var(--paz-badge-success-text);
+  background: var(--paz-badge-success-bg);
+  color: var(--paz-badge-success-text);
+}
+.actual .hito-punto { box-shadow: 0 0 0 4px var(--paz-badge-success-bg); }
+.hito-etiqueta { font-weight: 600; color: var(--paz-text-primary); font-size: .875rem; }
+.hito-fecha { font-size: .8rem; color: var(--paz-text-secondary); }
+.cumplido .hito-fecha { color: var(--paz-text-primary); }
+
+/* ── Tabla de inmuebles ── */
+.tabla-inmuebles {
+  width: 100%;
+  min-width: 48rem;
+  border-collapse: collapse;
+  font-size: .875rem;
+}
+.tabla-inmuebles th {
+  text-align: left;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--paz-text-secondary);
+  padding: .5rem .75rem;
+  border-bottom: 1px solid var(--paz-border-color);
+  white-space: nowrap;
+}
+.tabla-inmuebles td {
+  padding: .65rem .75rem;
+  border-bottom: 1px solid var(--paz-border-color);
+  color: var(--paz-text-primary);
+}
+.tabla-inmuebles tbody tr:hover { background: var(--paz-bg-card-hover); }
+
+/* ── Bloques de campos ── */
+.campos {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: .75rem;
+  margin: 0;
+}
+.vacio-valor { color: var(--paz-text-secondary) !important; }

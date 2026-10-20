@@ -49,6 +49,8 @@ export interface BatchResponse {
     pendientes?: number;
     rateLimit?: boolean;
     retryAfterSeg?: number | null;
+    /** Mensaje si el servicio del Conservador no respondió (no es un problema de las carátulas). */
+    servicioNoDisponible?: string | null;
     cuota?: EstadoCuota;
     resultados: BatchResultItem[];
 }

@@ -1,0 +1,185 @@
+<app-page-header
+  icono="pi pi-chart-line"
+  titulo="Avance de Negocios"
+  subtitulo="Busca un cliente para ver en qué está cada uno de sus negocios.">
+  <span class="paz-chip" *ngIf="estado?.actualizado" pTooltip="Los datos se actualizan automáticamente varias veces al día" tooltipPosition="bottom">
+    <i class="pi pi-clock"></i> Datos al {{ estado!.actualizado | date:'dd/MM/yyyy HH:mm' }}
+  </span>
+  <button *ngIf="esAdmin" pButton type="button" icon="pi pi-refresh" class="p-button-outlined p-button-sm"
+          [label]="sincronizando ? 'Actualizando…' : 'Actualizar datos'" [loading]="sincronizando"
+          [disabled]="sincronizando" (click)="actualizarDatos()"></button>
+</app-page-header>
+
+<!-- ───── Buscador ───── -->
+<section class="paz-panel mb-4">
+  <label for="busqueda" class="block font-semibold text-900 mb-2">Buscar cliente</label>
+  <p-autoComplete inputId="busqueda" [(ngModel)]="texto" [suggestions]="sugerencias"
+                  (completeMethod)="buscar($event)" (onSelect)="seleccionar($event)" (onClear)="limpiar()"
+                  optionLabel="nombre" [minLength]="3" [delay]="350" [fluid]="true" [showClear]="true"
+                  [showEmptyMessage]="true" [emptyMessage]="mensajeVacio" scrollHeight="360px"
+                  placeholder="RUT, nombre, N° de contrato o correo" ariaLabel="Buscar cliente"
+                  styleClass="buscador">
+    <ng-template let-c pTemplate="item">
+      <div class="sugerencia">
+        <span class="paz-avatar">{{ iniciales(c.nombre) }}</span>
+        <div class="min-w-0 flex-1">
+          <div class="font-semibold sugerencia-nombre">{{ c.nombre || 'Sin nombre registrado' }}</div>
+          <div class="text-sm opacity-80">{{ c.rut }}<span *ngIf="c.email"> · {{ c.email }}</span></div>
+          <div class="text-xs opacity-70 sugerencia-proyectos" *ngIf="c.proyectos.length">{{ c.proyectos.join(' · ') }}</div>
+        </div>
+        <span class="paz-chip">{{ c.negocios }} {{ c.negocios === 1 ? 'negocio' : 'negocios' }}</span>
+      </div>
+    </ng-template>
+  </p-autoComplete>
+  <small class="text-500 block mt-2">
+    Ejemplos: <strong>12.345.678-9</strong> o <strong>12345678</strong> · <strong>gonzalo elgueta</strong> ·
+    <strong>I.0921706009</strong> · <strong>nombre&#64;correo.cl</strong>
+  </small>
+</section>
+
+<!-- ───── Cargando ───── -->
+<div *ngIf="cargandoFicha" class="flex flex-column gap-3" aria-busy="true">
+  <p-skeleton height="7rem" borderRadius="12px"></p-skeleton>
+  <p-skeleton height="5rem" borderRadius="12px"></p-skeleton>
+  <p-skeleton height="12rem" borderRadius="12px"></p-skeleton>
+</div>
+
+<!-- ───── Error ───── -->
+<div *ngIf="errorFicha && !cargandoFicha" class="paz-panel flex align-items-center gap-3" role="alert">
+  <i class="pi pi-exclamation-circle text-2xl" style="color: var(--paz-accent-red);"></i>
+  <span class="text-700">{{ errorFicha }}</span>
+</div>
+
+<!-- ───── Sin búsqueda todavía ───── -->
+<div *ngIf="!ficha && !cargandoFicha && !errorFicha" class="paz-panel vacio">
+  <i class="pi pi-search vacio-icono"></i>
+  <div class="text-900 font-semibold text-lg">Busca un cliente para comenzar</div>
+  <p class="text-600 m-0">
+    Verás sus datos de contacto, cada uno de sus negocios, los inmuebles asociados y en qué etapa va
+    (reserva, promesa, escritura…), junto con el área a la que consultar por cada dato.
+  </p>
+</div>
+
+<!-- ───── Ficha del cliente ───── -->
+<ng-container *ngIf="ficha && !cargandoFicha">
+
+  <section class="paz-panel mb-3">
+    <div class="flex align-items-start gap-3 flex-wrap">
+      <span class="paz-avatar paz-avatar-lg">{{ iniciales(ficha.cliente.nombre) }}</span>
+      <div class="flex-1 min-w-0">
+        <h2 class="cliente-nombre">{{ ficha.cliente.nombre || 'Cliente sin nombre registrado' }}</h2>
+        <div class="flex align-items-center gap-2 text-600">
+          <span>RUT {{ ficha.cliente.rut }}</span>
+          <button pButton type="button" icon="pi pi-copy" class="p-button-text p-button-rounded p-button-sm"
+                  pTooltip="Copiar RUT" (click)="copiar(ficha.cliente.rut)" aria-label="Copiar RUT"></button>
+        </div>
+      </div>
+      <span class="paz-estado" [ngClass]="ficha.negocios.length > 1 ? 'paz-estado--alerta' : 'paz-estado--neutro'">
+        {{ ficha.negocios.length }} {{ ficha.negocios.length === 1 ? 'negocio' : 'negocios' }}
+      </span>
+    </div>
+
+    <!-- Datos de contacto -->
+    <dl class="contacto" *ngIf="ficha.cliente.seccion as s">
+      <div *ngFor="let c of s.campos">
+        <dt>{{ c.etiqueta }}</dt>
+        <dd>
+          <ng-container *ngIf="esCorreo(c); else valorPlano">
+            <a [href]="'mailto:' + c.valor">{{ c.valor }}</a>
+          </ng-container>
+          <ng-template #valorPlano>{{ formatear(c.valor, c.tipo) }}</ng-template>
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <!-- Varios negocios: todos visibles de inmediato -->
+  <div *ngIf="ficha.negocios.length > 1" class="aviso-negocios" role="status">
+    <i class="pi pi-info-circle"></i>
+    <span>Este cliente tiene <strong>{{ ficha.negocios.length }} negocios</strong>. Selecciona uno para ver su detalle.</span>
+  </div>
+
+  <div class="negocios-lista" role="tablist" aria-label="Negocios del cliente">
+    <button *ngFor="let n of ficha.negocios" type="button" role="tab" class="negocio-tab"
+            [class.activo]="n === negocioActivo" [attr.aria-selected]="n === negocioActivo"
+            (click)="elegirNegocio(n)">
+      <span class="negocio-proyecto">{{ n.proyecto || n.codigoProyecto || 'Proyecto sin nombre' }}</span>
+      <span class="text-sm text-600">Contrato {{ n.contrato }}</span>
+      <span class="flex flex-wrap gap-2 mt-2">
+        <span class="paz-estado" [ngClass]="claseEstado(n.estado)">{{ n.estado || 'Sin estado' }}</span>
+        <span class="paz-chip">{{ n.cantidadInmuebles }} {{ n.cantidadInmuebles === 1 ? 'inmueble' : 'inmuebles' }}</span>
+      </span>
+    </button>
+  </div>
+
+  <ng-container *ngIf="negocioActivo as n">
+
+    <!-- Hitos: línea de tiempo -->
+    <section class="paz-panel mb-3" *ngFor="let s of seccion(n, 'linea_tiempo')">
+      <ng-container *ngTemplateOutlet="cabecera; context: { $implicit: s }"></ng-container>
+      <ol class="hitos">
+        <li *ngFor="let c of s.campos; let i = index" [class.cumplido]="!!c.valor" [class.actual]="i === ultimoHito(s)">
+          <span class="hito-punto"><i class="pi" [ngClass]="c.valor ? 'pi-check' : 'pi-minus'"></i></span>
+          <span class="hito-etiqueta">{{ c.etiqueta }}</span>
+          <span class="hito-fecha">{{ c.valor ? formatear(c.valor, c.tipo) : 'Pendiente' }}</span>
+        </li>
+      </ol>
+    </section>
+
+    <!-- Inmuebles -->
+    <section class="paz-panel mb-3" *ngFor="let s of seccion(n, 'tabla')">
+      <ng-container *ngTemplateOutlet="cabecera; context: { $implicit: s }"></ng-container>
+      <div class="overflow-x-auto">
+        <table class="tabla-inmuebles">
+          <thead>
+            <tr>
+              <th scope="col">Código</th>
+              <th scope="col" *ngFor="let col of s.columnas" [class.text-right]="col.tipo === 'decimal' || col.tipo === 'numero'">{{ col.etiqueta }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let f of s.filas">
+              <td class="font-semibold">{{ f.codigoInmueble }}</td>
+              <td *ngFor="let col of s.columnas" [class.text-right]="col.tipo === 'decimal' || col.tipo === 'numero'">
+                <span *ngIf="col.campo.startsWith('estado') && f.valores[col.campo]; else celda"
+                      class="paz-estado" [ngClass]="claseEstado($any(f.valores[col.campo]))">{{ f.valores[col.campo] }}</span>
+                <ng-template #celda>{{ formatear(f.valores[col.campo], col.tipo) }}</ng-template>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Bloques de datos por área -->
+    <div class="grid">
+      <div class="col-12 lg:col-6 xl:col-4" *ngFor="let s of seccion(n, 'campos')">
+        <section class="paz-panel h-full">
+          <ng-container *ngTemplateOutlet="cabecera; context: { $implicit: s }"></ng-container>
+          <dl class="campos" *ngIf="tieneDatos(s); else sinDatos">
+            <div *ngFor="let c of s.campos">
+              <dt>{{ c.etiqueta }}</dt>
+              <dd [class.vacio-valor]="!c.valor">{{ formatear(c.valor, c.tipo) }}</dd>
+            </div>
+          </dl>
+          <ng-template #sinDatos><p class="text-500 m-0">Sin información registrada.</p></ng-template>
+        </section>
+      </div>
+    </div>
+  </ng-container>
+
+  <p class="text-500 text-sm mt-3" *ngIf="ficha.actualizado">
+    <i class="pi pi-clock mr-1"></i>Información al {{ ficha.actualizado | date:'dd/MM/yyyy HH:mm' }}.
+  </p>
+</ng-container>
+
+<!-- Cabecera común de cada sección: título y área a la que consultar -->
+<ng-template #cabecera let-s>
+  <header class="seccion-cab">
+    <i *ngIf="s.icono" [class]="s.icono"></i>
+    <h3>{{ s.titulo }}</h3>
+    <span *ngIf="s.area" class="seccion-area" pTooltip="Área a la que consultar por esta información" tooltipPosition="top">
+      Consultar a: {{ s.area }}
+    </span>
+  </header>
+</ng-template>

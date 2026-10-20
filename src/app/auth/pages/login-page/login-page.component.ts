@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { moduloPorCodigo } from '../../../core/permisos/modulos';
 
 @Component({
   selector: 'app-login-page',
@@ -75,7 +76,15 @@ export class LoginPageComponent implements OnInit {
   private destinoTrasLogin(): string {
     const url = this.route.snapshot.queryParamMap.get('returnUrl');
     const esInterna = !!url && url.startsWith('/') && !url.startsWith('//') && !url.startsWith('/auth');
-    return esInterna ? url! : '/home';
+    if (esInterna) return url!;
+
+    // Un usuario con acceso a un solo módulo (ej. solo Avance de Negocios)
+    // entra directo a ese módulo: Inicio no le aporta nada.
+    const perfil = this.authService.perfil;
+    if (perfil?.rol === 'usuario' && perfil.modulos.length === 1) {
+      return moduloPorCodigo(perfil.modulos[0])?.ruta ?? '/home';
+    }
+    return '/home';
   }
 
   private mensajeError(err: HttpErrorResponse): string {

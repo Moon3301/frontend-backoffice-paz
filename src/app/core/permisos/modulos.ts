@@ -5,7 +5,7 @@
  * - 'admin'   → ve todos los módulos y la administración de usuarios.
  * - 'usuario' → solo los módulos que tenga asignados.
  */
-export type CodigoModulo = 'conservador' | 'copropiedad' | 'leads';
+export type CodigoModulo = 'conservador' | 'copropiedad' | 'leads' | 'negocios';
 export type Rol = 'admin' | 'usuario';
 
 export interface ModuloInfo {
@@ -30,6 +30,13 @@ export const MODULOS: ModuloInfo[] = [
     descripcion: 'Reglamentos, plantillas de correo e historial de envíos al promesar.',
     ruta: '/copropiedad',
     icono: 'pi pi-users',
+  },
+  {
+    codigo: 'negocios',
+    nombre: 'Avance de Negocios',
+    descripcion: 'Estado de cada negocio de un cliente: inmuebles, hitos, venta y escrituración.',
+    ruta: '/negocios',
+    icono: 'pi pi-chart-line',
   },
   {
     codigo: 'leads',

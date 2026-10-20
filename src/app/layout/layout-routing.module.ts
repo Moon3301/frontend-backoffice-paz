@@ -28,6 +28,11 @@ const routes: Routes = [
         loadChildren: () => import('../features/copropiedad/copropiedad.module').then(m => m.CopropiedadModule)
       },
       {
+        path: 'negocios',
+        canActivate: [moduloGuard('negocios')],
+        loadChildren: () => import('../features/negocios/negocios.module').then(m => m.NegociosModule)
+      },
+      {
         path: 'leads',
         canActivate: [moduloGuard('leads')],
         loadChildren: () => import('../features/testing-leads/testing-leads.module').then(m => m.TestingLeadsModule)

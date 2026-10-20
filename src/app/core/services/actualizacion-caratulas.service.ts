@@ -229,10 +229,12 @@ export class ActualizacionCaratulasService implements OnDestroy {
         break;
 
       default:
+        // El detalle explica la causa (ej. "El servicio del Conservador no está
+        // respondiendo…") en vez de un genérico "terminó con errores".
         this.toast(
           'error',
           'La actualización terminó con errores',
-          `Se revisaron ${e.revisadas} de ${e.total} carátula(s).${noActualizadas}`,
+          `Se revisaron ${e.revisadas} de ${e.total} carátula(s).${noActualizadas}${e.detalle ? ' ' + e.detalle : ''}`,
         );
     }
   }

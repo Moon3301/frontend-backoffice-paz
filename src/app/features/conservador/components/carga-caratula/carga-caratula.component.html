@@ -100,16 +100,24 @@
     <!-- Batch success/partial -->
     <div *ngIf="batchResult && !isBatchLoading"
          class="border-round mb-4 mt-3 overflow-hidden"
-         style="border: 1px solid #bbf7d0;">
+         [style.border]="batchResult.exitosos > 0 ? '1px solid var(--paz-success-banner-border)' : '1px solid var(--paz-error-banner-border)'">
 
-        <!-- Header resumen -->
+        <!-- Header resumen: verde solo si se procesó al menos una carátula -->
         <div class="flex align-items-center gap-3 p-4"
-             style="background: #f0fdf4;">
-            <i class="pi pi-check-circle text-2xl" style="color: #16a34a;"></i>
+             [style.background]="batchResult.exitosos > 0 ? 'var(--paz-success-banner-bg)' : 'var(--paz-error-banner-bg)'">
+            <i class="pi text-2xl"
+               [ngClass]="batchResult.exitosos > 0 ? 'pi-check-circle' : 'pi-times-circle'"
+               [style.color]="batchResult.exitosos > 0 ? 'var(--paz-badge-success-text)' : 'var(--paz-badge-error-text)'"></i>
             <div class="flex-1">
-                <div class="font-bold mb-1" style="color: #15803d;">
-                    Lote procesado
+                <div class="font-bold mb-1"
+                     [style.color]="batchResult.exitosos > 0 ? 'var(--paz-badge-success-text)' : 'var(--paz-badge-error-text)'">
+                    {{ batchResult.exitosos > 0 ? 'Lote procesado' : 'No se pudo procesar el lote' }}
                     <span *ngIf="archivoNombre" class="font-normal text-sm text-600"> · {{ archivoNombre }}</span>
+                </div>
+                <div *ngIf="batchResult.servicioNoDisponible" class="flex align-items-start gap-2 text-sm mb-2"
+                     style="color: var(--paz-badge-warning-text);" role="alert">
+                    <i class="pi pi-exclamation-triangle mt-1"></i>
+                    <span>{{ batchResult.servicioNoDisponible }}</span>
                 </div>
                 <div class="flex gap-3 flex-wrap">
                     <span class="text-sm">
